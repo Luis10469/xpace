@@ -9,7 +9,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4 py-4 flex flex-wrap justify-between items-center">
         <Link to="/" className="text-2xl font-bold tracking-wide hover:text-blue-200 flex items-center gap-2">
           <span className="text-3xl">📡</span>
-          <span>WiFiConnect</span>
+          <span>SpaceX Fiber</span>
         </Link>
         <div className="flex flex-wrap items-center gap-4 mt-2 md:mt-0">
           <Link to="/cobertura" className="hover:text-blue-200 transition font-medium">

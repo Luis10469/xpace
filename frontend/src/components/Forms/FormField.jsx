@@ -1,7 +1,7 @@
 const FormField = ({ label, type = 'text', name, value, onChange, placeholder, required = false, error }) => {
   return (
     <div className="mb-4">
-      <label className="block text-gray-700 font-semibold mb-2">
+      <label className="block text-slate-300 font-semibold mb-2">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <input

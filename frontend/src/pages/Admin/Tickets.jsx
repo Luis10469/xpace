@@ -8,7 +8,7 @@ const TicketsAdmin = () => {
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">Tickets de Soporte</h1>
-      <div className="bg-white rounded shadow overflow-x-auto">
+      <div className="bg-slate-800 rounded shadow overflow-x-auto">
         <table className="w-full">
           <thead className="bg-gray-200">
             <tr>

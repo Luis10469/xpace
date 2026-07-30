@@ -103,7 +103,7 @@ const Planes = () => {
               ${
                 plan.destacado
                   ? 'bg-blue-600/20 border-blue-400 shadow-xl shadow-blue-900/30'
-                  : 'bg-white/5 border-white/10'
+                  : 'bg-slate-800/5 border-white/10'
               }`}
           >
 
@@ -176,7 +176,7 @@ const Planes = () => {
                 ${
                   plan.destacado
                     ? 'bg-blue-600 hover:bg-blue-500 text-white'
-                    : 'bg-white/10 hover:bg-blue-600 text-white border border-white/10'
+                    : 'bg-slate-800/10 hover:bg-blue-600 text-white border border-white/10'
                 }`}
             >
               Contratar
@@ -197,7 +197,7 @@ const Planes = () => {
         <Link
           to="/cobertura"
           className="inline-block px-7 py-3 rounded-xl
-          bg-white/10 hover:bg-white/20
+          bg-slate-800/10 hover:bg-slate-800/20
           border border-white/10
           text-white font-semibold transition"
         >

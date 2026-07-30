@@ -9,7 +9,7 @@ const Facturas = () => {
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">Mis Facturas</h1>
-      <div className="bg-white rounded shadow overflow-hidden">
+      <div className="bg-slate-800 rounded shadow overflow-hidden">
         <table className="w-full">
           <thead className="bg-gray-200">
             <tr>

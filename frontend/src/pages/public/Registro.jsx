@@ -53,7 +53,7 @@ const Registro = () => {
 
         {/* TARJETA */}
         <div
-          className="bg-white/5 backdrop-blur-xl
+          className="bg-slate-800/5 backdrop-blur-xl
           border border-white/10
           rounded-3xl
           shadow-2xl
@@ -80,7 +80,7 @@ const Registro = () => {
                   })
                 }
                 className="w-full px-4 py-4 rounded-xl
-                bg-white/10
+                bg-slate-800/10
                 border border-white/20
                 text-white
                 placeholder-gray-400
@@ -110,7 +110,7 @@ const Registro = () => {
                   })
                 }
                 className="w-full px-4 py-4 rounded-xl
-                bg-white/10
+                bg-slate-800/10
                 border border-white/20
                 text-white
                 placeholder-gray-400
@@ -140,7 +140,7 @@ const Registro = () => {
                   })
                 }
                 className="w-full px-4 py-4 rounded-xl
-                bg-white/10
+                bg-slate-800/10
                 border border-white/20
                 text-white
                 placeholder-gray-400
@@ -170,7 +170,7 @@ const Registro = () => {
                   })
                 }
                 className="w-full px-4 py-4 rounded-xl
-                bg-white/10
+                bg-slate-800/10
                 border border-white/20
                 text-white
                 placeholder-gray-400

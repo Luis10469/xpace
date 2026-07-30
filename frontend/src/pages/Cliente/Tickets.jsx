@@ -15,7 +15,7 @@ const Tickets = () => {
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">Mis Tickets</h1>
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow mb-6">
+      <form onSubmit={handleSubmit} className="bg-slate-800 p-6 rounded shadow mb-6">
         <input type="text" placeholder="Asunto" required
           value={form.asunto}
           onChange={(e) => setForm({...form, asunto: e.target.value})}
@@ -34,9 +34,9 @@ const Tickets = () => {
         <button className="bg-blue-600 text-white px-4 py-2 rounded">Crear Ticket</button>
       </form>
       {tickets.map((t) => (
-        <div key={t.id} className="bg-white p-4 rounded shadow mb-2">
+        <div key={t.id} className="bg-slate-800 p-4 rounded shadow mb-2">
           <h3 className="font-bold">{t.asunto}</h3>
-          <p className="text-sm text-gray-600">{t.descripcion}</p>
+          <p className="text-sm text-slate-300">{t.descripcion}</p>
           <span className="text-xs bg-blue-100 px-2 py-1 rounded">{t.estado}</span>
         </div>
       ))}

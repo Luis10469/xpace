@@ -40,7 +40,7 @@ const Footer = () => {
 
 </div>
         
-        <p className="text-gray-500 text-sm">
+        <p className="text-slate-400 text-sm">
           Todos los derechos reservados
         </p>
       </div>

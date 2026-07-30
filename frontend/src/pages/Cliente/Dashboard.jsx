@@ -21,16 +21,16 @@ const Dashboard = () => {
       <h1 className="text-3xl font-bold mb-6">Mi Dashboard</h1>
       {datos ? (
         <div className="grid md:grid-cols-3 gap-4">
-          <div className="bg-white p-6 rounded shadow">
-            <h3 className="text-gray-500">Estado</h3>
+          <div className="bg-slate-800 p-6 rounded shadow">
+            <h3 className="text-slate-400">Estado</h3>
             <p className="text-2xl font-bold text-green-600">{datos.estado}</p>
           </div>
-          <div className="bg-white p-6 rounded shadow">
-            <h3 className="text-gray-500">Plan</h3>
+          <div className="bg-slate-800 p-6 rounded shadow">
+            <h3 className="text-slate-400">Plan</h3>
             <p className="text-2xl font-bold">{datos.plan}</p>
           </div>
-          <div className="bg-white p-6 rounded shadow">
-            <h3 className="text-gray-500">Código Contrato</h3>
+          <div className="bg-slate-800 p-6 rounded shadow">
+            <h3 className="text-slate-400">Código Contrato</h3>
             <p className="text-xl font-bold">{datos.codigo_contrato}</p>
           </div>
         </div>

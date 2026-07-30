@@ -50,7 +50,7 @@ const Inicio = () => {
       {/* BENEFICIOS */}
       <section className="grid md:grid-cols-3 gap-6 mt-10">
 
-        <div className="bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/20 hover:bg-white/20 transition transform hover:scale-105">
+        <div className="bg-slate-800/10 backdrop-blur-md p-8 rounded-2xl border border-white/20 hover:bg-slate-800/20 transition transform hover:scale-105">
           <div className="text-5xl mb-4">🚀</div>
 
           <h3 className="font-bold text-2xl mb-2 text-white">
@@ -62,7 +62,7 @@ const Inicio = () => {
           </p>
         </div>
 
-        <div className="bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/20 hover:bg-white/20 transition transform hover:scale-105">
+        <div className="bg-slate-800/10 backdrop-blur-md p-8 rounded-2xl border border-white/20 hover:bg-slate-800/20 transition transform hover:scale-105">
           <div className="text-5xl mb-4">📡</div>
 
           <h3 className="font-bold text-2xl mb-2 text-white">
@@ -74,7 +74,7 @@ const Inicio = () => {
           </p>
         </div>
 
-        <div className="bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/20 hover:bg-white/20 transition transform hover:scale-105">
+        <div className="bg-slate-800/10 backdrop-blur-md p-8 rounded-2xl border border-white/20 hover:bg-slate-800/20 transition transform hover:scale-105">
           <div className="text-5xl mb-4">💬</div>
 
           <h3 className="font-bold text-2xl mb-2 text-white">
@@ -113,7 +113,7 @@ const Inicio = () => {
             return (
               <div
                 key={index}
-                className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden"
+                className="bg-slate-800/10 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden"
               >
 
                 <button
@@ -121,7 +121,7 @@ const Inicio = () => {
                   onClick={() =>
                     setFaqAbierta(abierta ? null : index)
                   }
-                  className="w-full flex justify-between items-center gap-4 p-6 text-left hover:bg-white/10 transition"
+                  className="w-full flex justify-between items-center gap-4 p-6 text-left hover:bg-slate-800/10 transition"
                 >
                   <span className="font-bold text-lg">
                     {faq.pregunta}

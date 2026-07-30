@@ -27,7 +27,7 @@ const Login = () => {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4">
-      <div className="max-w-md w-full bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/20 shadow-2xl">
+      <div className="max-w-md w-full bg-slate-800/10 backdrop-blur-md p-8 rounded-2xl border border-white/20 shadow-2xl">
         <h2 className="text-3xl font-bold text-center text-white mb-2">
           🔐 Iniciar Sesión
         </h2>
@@ -42,7 +42,7 @@ const Login = () => {
               onChange={(e) => setForm({...form, correo: e.target.value})}
               placeholder="tu@correo.com"
               required 
-              className="w-full px-4 py-3 bg-white/20 border-2 border-white/30 rounded-lg focus:outline-none focus:border-blue-400 text-white placeholder-gray-300 transition"
+              className="w-full px-4 py-3 bg-slate-800/20 border-2 border-white/30 rounded-lg focus:outline-none focus:border-blue-400 text-white placeholder-gray-300 transition"
             />
           </div>
           
@@ -54,7 +54,7 @@ const Login = () => {
               onChange={(e) => setForm({...form, contraseña: e.target.value})}
               placeholder="••••••••"
               required 
-              className="w-full px-4 py-3 bg-white/20 border-2 border-white/30 rounded-lg focus:outline-none focus:border-blue-400 text-white placeholder-gray-300 transition"
+              className="w-full px-4 py-3 bg-slate-800/20 border-2 border-white/30 rounded-lg focus:outline-none focus:border-blue-400 text-white placeholder-gray-300 transition"
             />
           </div>
 

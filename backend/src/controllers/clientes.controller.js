@@ -4,15 +4,15 @@ export const getClientes = async (req, res) => {
   try {
     const rows = await query(`
       SELECT 
-        c.id, 
-        c.codigo_contrato, 
-        u.nombre, 
-        u.correo, 
-        u.telefono, 
-        c.direccion, 
-        c.estado, 
-        p.nombre AS plan,
-        z.nombre AS zona,
+        c.id,
+        c.codigo_contrato,
+        u.nombre,
+        u.correo,
+        u.telefono,
+        c.direccion,
+        c.estado,
+        p.nombre AS nombre_plan,
+        z.nombre AS nombre_zona,
         c.fecha_instalacion
       FROM clientes c
       INNER JOIN usuarios u ON c.usuario_id = u.id
@@ -20,10 +20,17 @@ export const getClientes = async (req, res) => {
       LEFT JOIN zonas z ON c.zona_id = z.id
       ORDER BY c.id DESC
     `);
+
+    console.log("CLIENTES DESDE SQL:", rows);
+
     res.json(rows);
+
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ message: 'Error al obtener clientes', error: error.message });
+    console.error(error);
+    res.status(500).json({
+      message: 'Error al obtener clientes',
+      error: error.message
+    });
   }
 };
 

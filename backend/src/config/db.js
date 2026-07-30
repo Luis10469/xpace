@@ -3,22 +3,27 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+const connectionString = [
+  'Driver={ODBC Driver 18 for SQL Server}',
+  'Server=LUISVILLA\\MSSQLSERVER01',
+  'Database=wifi_connect',
+  'Trusted_Connection=Yes',
+  'Encrypt=No',
+  'TrustServerCertificate=Yes'
+].join(';');
+
 const config = {
-  server: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-
-  options: {
-    trustedConnection: true,
-    trustServerCertificate: true,
-    encrypt: false
-  },
-
-  driver: 'ODBC Driver 18 for SQL Server',
+  connectionString,
 
   pool: {
     max: 10,
     min: 0,
     idleTimeoutMillis: 30000
+  },
+
+  options: {
+    trustedConnection: true,
+    useUTC: false
   }
 };
 
@@ -31,7 +36,8 @@ export const connectDB = async () => {
     pool = await sql.connect(config);
 
     console.log('✅ SQL Server conectado correctamente');
-    console.log(`📦 Base de datos: ${process.env.DB_NAME}`);
+    console.log('📦 Base de datos: wifi_connect');
+    console.log('🖥️ Servidor: LUISVILLA\\MSSQLSERVER01');
 
     return pool;
   } catch (error) {

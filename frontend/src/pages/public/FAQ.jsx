@@ -62,7 +62,7 @@ const FAQ = () => {
               key={index}
               className="rounded-2xl overflow-hidden
               border border-white/10
-              bg-white/5
+              bg-slate-800/5
               backdrop-blur-xl
               shadow-lg"
             >
@@ -74,7 +74,7 @@ const FAQ = () => {
                 }
                 className="w-full flex items-center justify-between
                 gap-4 px-6 py-5 text-left
-                hover:bg-white/10 transition"
+                hover:bg-slate-800/10 transition"
               >
                 <span className="text-lg font-bold text-white">
                   {faq.pregunta}

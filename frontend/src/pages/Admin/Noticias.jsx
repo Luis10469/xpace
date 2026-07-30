@@ -13,7 +13,7 @@ const Noticias = () => {
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">Gestión de Noticias</h1>
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow mb-6">
+      <form onSubmit={handleSubmit} className="bg-slate-800 p-6 rounded shadow mb-6">
         <input type="text" placeholder="Título" required
           value={form.titulo}
           onChange={(e) => setForm({...form, titulo: e.target.value})}

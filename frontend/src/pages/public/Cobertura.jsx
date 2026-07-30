@@ -26,7 +26,7 @@ const Cobertura = () => {
       </p>
       
       <div className="max-w-2xl mx-auto mb-12">
-        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-2xl">
+        <div className="bg-slate-800/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-2xl">
           <label className="block text-white font-semibold mb-3">
             Ingresa tu barrio o residencia
           </label>
@@ -35,7 +35,7 @@ const Cobertura = () => {
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
             placeholder="Ej: Centro, Norte, Sur..."
-            className="w-full px-4 py-3 bg-white/20 border-2 border-white/30 rounded-lg focus:outline-none focus:border-blue-400 text-white placeholder-gray-300 transition"
+            className="w-full px-4 py-3 bg-slate-800/20 border-2 border-white/30 rounded-lg focus:outline-none focus:border-blue-400 text-white placeholder-gray-300 transition"
           />
         </div>
       </div>
@@ -44,7 +44,7 @@ const Cobertura = () => {
         {zonasFiltradas.map((zona) => (
           <div 
             key={zona.id} 
-            className="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20 hover:bg-white/20 hover:border-blue-400/50 transition transform hover:-translate-y-1 shadow-xl"
+            className="bg-slate-800/10 backdrop-blur-md p-6 rounded-2xl border border-white/20 hover:bg-slate-800/20 hover:border-blue-400/50 transition transform hover:-translate-y-1 shadow-xl"
           >
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-xl font-bold text-white">📍 {zona.nombre}</h3>

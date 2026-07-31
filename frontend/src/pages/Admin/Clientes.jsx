@@ -2,7 +2,19 @@ import { useEffect, useState } from "react";
 import api from "../../services/api.js";
 
 const Clientes = () => {
-  const [clientes, setClientes] = useState([]);
+  const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
+const [clientes, setClientes] = useState([]);
+
+const [mostrarModal, setMostrarModal] = useState(false);
+const [modoEdicion, setModoEdicion] = useState(false);
+
+const [formulario, setFormulario] = useState({
+  usuario_id: "",
+  plan_id: "",
+  zona_id: "",
+  direccion: "",
+  estado: "activo",
+});
 
   useEffect(() => {
     const cargarClientes = async () => {
@@ -17,6 +29,63 @@ const Clientes = () => {
     cargarClientes();
   }, []);
 
+  // ==========================
+  // FUNCIONES
+  // ==========================
+
+ const abrirNuevoCliente = () => {
+  setModoEdicion(false);
+
+  setFormulario({
+    usuario_id: "",
+    plan_id: "",
+    zona_id: "",
+    direccion: "",
+    estado: "activo",
+  });
+
+  setMostrarModal(true);
+};
+
+  const editarCliente = (cliente) => {
+  setModoEdicion(true);
+
+  setFormulario({
+    usuario_id: cliente.usuario_id ?? "",
+    plan_id: cliente.plan_id ?? "",
+    zona_id: cliente.zona_id ?? "",
+    direccion: cliente.direccion ?? "",
+    estado: cliente.estado ?? "activo",
+  });
+
+  setMostrarModal(true);
+};
+  const suspenderCliente = (id) => {
+    console.log("Suspender:", id);
+  };
+const guardarCliente = async () => {
+  try {
+
+    if (modoEdicion) {
+
+      await api.put(`/clientes/${clienteSeleccionado.id}`, formulario);
+
+    } else {
+
+      await api.post("/clientes", formulario);
+
+    }
+
+    setMostrarModal(false);
+
+    const { data } = await api.get("/clientes");
+    setClientes(data);
+
+  } catch (error) {
+    console.error(error);
+    alert("Ocurrió un error");
+  }
+};
   return (
     <div className="min-h-screen bg-slate-900 p-8 text-white">
 
@@ -36,19 +105,82 @@ const Clientes = () => {
           </p>
         </div>
 
+               <div className="flex gap-3">
+
+ <button
+  onClick={abrirNuevoCliente}
+  className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl font-semibold shadow-lg transition"
+>
+  + Nuevo Cliente
+</button>
+
+  <button
+  disabled={!clienteSeleccionado}
+  onClick={() => editarCliente(clienteSeleccionado)}
+  className={`px-6 py-3 rounded-xl font-semibold transition ${
+    clienteSeleccionado
+      ? "bg-amber-500 hover:bg-amber-600 text-white"
+      : "bg-slate-700 text-slate-500 cursor-not-allowed"
+  }`}
+>
+  ✏ Editar
+</button>
+
+  <button
+  disabled={!clienteSeleccionado}
+  onClick={() => suspenderCliente(clienteSeleccionado.id)}
+  className={`px-6 py-3 rounded-xl font-semibold transition ${
+    clienteSeleccionado
+      ? "bg-red-600 hover:bg-red-700 text-white"
+      : "bg-slate-700 text-slate-500 cursor-not-allowed"
+  }`}
+>
+  ⛔ Suspender
+</button>
+
+</div>
+
+    {mostrarModal && (
+  <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+    <div className="bg-slate-800 rounded-2xl w-full max-w-xl p-8">
+
+      <h2 className="text-2xl font-bold mb-6">
+        {modoEdicion ? "Editar Cliente" : "Nuevo Cliente"}
+      </h2>
+
+      <input
+        type="text"
+        placeholder="Dirección"
+        value={formulario.direccion}
+        onChange={(e) =>
+          setFormulario({
+            ...formulario,
+            direccion: e.target.value,
+          })
+        }
+        className="w-full mb-6 bg-slate-700 rounded-xl px-4 py-3"
+      />
+
+      <div className="flex justify-end gap-3">
+
         <button
-          className="
-          bg-blue-600
-          hover:bg-blue-700
-          px-6
-          py-3
-          rounded-xl
-          font-semibold
-          shadow-lg
-          transition"
+          onClick={() => setMostrarModal(false)}
+          className="bg-slate-600 hover:bg-slate-500 px-6 py-3 rounded-xl"
         >
-          + Nuevo Cliente
+          Cancelar
         </button>
+
+        <button
+          className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl"
+        >
+          {modoEdicion ? "Actualizar" : "Guardar"}
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+)}
       </div>
 
       {/* Tabla */}
@@ -70,8 +202,6 @@ const Clientes = () => {
               <th className="p-4">Dirección</th>
               <th className="p-4">Instalación</th>
               <th className="p-4">Estado</th>
-              <th className="p-4 text-center">Acciones</th>
-
             </tr>
 
           </thead>
@@ -83,26 +213,37 @@ const Clientes = () => {
               <tr>
 
                 <td
-                  colSpan="10"
+                  colSpan="9"
                   className="text-center p-10 text-slate-400"
                 >
                   No hay clientes registrados.
                 </td>
 
               </tr>
+              
 
             ) : (
 
-              clientes.map((c) => (
+             clientes.map((c) => (
 
-                <tr
-                  key={c.id}
-                  className="
-                  border-t
-                  border-slate-700
-                  hover:bg-slate-700
-                  transition"
-                >
+                    <tr
+                      key={c.id}
+                      onClick={() => {
+                        console.log("Cliente seleccionado:", c);
+                        setClienteSeleccionado(c);
+                      }}
+                      className={`
+                        border-t
+                        border-slate-700
+                        cursor-pointer
+                        transition
+                        ${
+                          clienteSeleccionado?.id === c.id
+                            ? "bg-blue-900/40"
+                            : "hover:bg-slate-700"
+                        }
+                      `}
+                    >
 
                   <td className="p-4 font-mono text-slate-200">
                     {c.codigo_contrato}
@@ -135,9 +276,7 @@ const Clientes = () => {
                   <td className="p-4 text-slate-300">
                     {new Date(c.fecha_instalacion).toLocaleDateString("es-CO")}
                   </td>
-
-                  <td className="p-4">
-
+                    <td className="p-4">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-bold ${
                         c.estado === "activo"
@@ -147,42 +286,8 @@ const Clientes = () => {
                     >
                       {c.estado}
                     </span>
-
                   </td>
-
-                  <td className="p-4">
-
-                    <div className="flex gap-2 justify-center">
-
-                      <button
-                        className="
-                        bg-amber-500
-                        hover:bg-amber-600
-                        px-4
-                        py-2
-                        rounded-lg
-                        text-white
-                        transition"
-                      >
-                        Editar
-                      </button>
-
-                      <button
-                        className="
-                        bg-red-600
-                        hover:bg-red-700
-                        px-4
-                        py-2
-                        rounded-lg
-                        text-white
-                        transition"
-                      >
-                        Suspender
-                      </button>
-
-                    </div>
-
-                  </td>
+                  
 
                 </tr>
 

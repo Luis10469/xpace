@@ -6,7 +6,8 @@ import clientesRoutes from './routes/clientes.routes.js';
 import planesRoutes from './routes/planes.routes.js';
 import ticketsRoutes from './routes/tickets.routes.js';
 import usuariosRoutes from './routes/usuarios.routes.js';
-
+import dashboardRoutes from './routes/dashboard.routes.js';
+import zonasRoutes from "./routes/zonas.routes.js";
 dotenv.config();
 
 const app = express();
@@ -14,14 +15,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use('/api/dashboard', dashboardRoutes);
 // Rutas
 app.use('/api/auth', authRoutes);
 app.use('/api/clientes', clientesRoutes);
 app.use('/api/planes', planesRoutes);
 app.use('/api/tickets', ticketsRoutes);
 app.use('/api/usuarios', usuariosRoutes);
-
+app.use("/api/zonas", zonasRoutes);
 // Ruta raíz
 app.get('/', (req, res) => {
   res.json({ message: 'API WiFiConnect funcionando ✅' });

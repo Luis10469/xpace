@@ -1,43 +1,85 @@
 import { useEffect, useState } from "react";
 import api from "../../services/api.js";
+import ClienteToolbar from "../../components/Clientes/ClienteToolbar.jsx";
+import ClienteModal from "../../components/Clientes/ClienteModal";
 
 const Clientes = () => {
+  const [clientes, setClientes] = useState([]);
+  const [planes, setPlanes] = useState([]);
+  const [zonas, setZonas] = useState([]);
+
+  // ==========================
+  // SELECCIÓN
+  // ==========================
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
-const [clientes, setClientes] = useState([]);
 
-const [mostrarModal, setMostrarModal] = useState(false);
-const [modoEdicion, setModoEdicion] = useState(false);
+  // ==========================
+  // MODAL
+  // ==========================
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [modoEdicion, setModoEdicion] = useState(false);
 
+  // ==========================
+  // FORMULARIO
+  // ==========================
 const [formulario, setFormulario] = useState({
   usuario_id: "",
+  nombre: "",
+  correo: "",
+  telefono: "",
   plan_id: "",
   zona_id: "",
   direccion: "",
   estado: "activo",
 });
+  // ==========================
+  // CARGA DE DATOS
+  // ==========================
+  const cargarClientes = async () => {
+    try {
+      const { data } = await api.get("/clientes");
+      setClientes(data);
+    } catch (error) {
+      console.error("Error cargando clientes:", error);
+    }
+  };
+
+  const cargarPlanes = async () => {
+    try {
+      const { data } = await api.get("/planes");
+      setPlanes(data);
+    } catch (error) {
+      console.error("Error cargando planes:", error);
+    }
+  };
+
+  const cargarZonas = async () => {
+    try {
+      const { data } = await api.get("/zonas");
+      setZonas(data);
+    } catch (error) {
+      console.error("Error cargando zonas:", error);
+    }
+  };
 
   useEffect(() => {
-    const cargarClientes = async () => {
-      try {
-        const { data } = await api.get("/clientes");
-        setClientes(data);
-      } catch (error) {
-        console.error("Error al cargar clientes:", error);
-      }
-    };
-
     cargarClientes();
+    cargarPlanes();
+    cargarZonas();
   }, []);
 
   // ==========================
   // FUNCIONES
   // ==========================
-
- const abrirNuevoCliente = () => {
+const abrirNuevoCliente = () => {
   setModoEdicion(false);
+  setClienteSeleccionado(null);
 
   setFormulario({
     usuario_id: "",
+    nombre: "",
+    correo: "",
+    telefono: "",
     plan_id: "",
     zona_id: "",
     direccion: "",
@@ -46,12 +88,16 @@ const [formulario, setFormulario] = useState({
 
   setMostrarModal(true);
 };
-
   const editarCliente = (cliente) => {
   setModoEdicion(true);
 
   setFormulario({
     usuario_id: cliente.usuario_id ?? "",
+
+    nombre: cliente.nombre ?? "",
+    correo: cliente.correo ?? "",
+    telefono: cliente.telefono ?? "",
+
     plan_id: cliente.plan_id ?? "",
     zona_id: cliente.zona_id ?? "",
     direccion: cliente.direccion ?? "",
@@ -61,31 +107,57 @@ const [formulario, setFormulario] = useState({
   setMostrarModal(true);
 };
   const suspenderCliente = (id) => {
-    console.log("Suspender:", id);
+    console.log("Función de suspensión pendiente", id);
   };
-const guardarCliente = async () => {
+
+  const guardarCliente = async () => {
   try {
 
     if (modoEdicion) {
 
-      await api.put(`/clientes/${clienteSeleccionado.id}`, formulario);
+      await api.put(
+        `/clientes/${clienteSeleccionado.id}`,
+        formulario
+      );
 
     } else {
 
-      await api.post("/clientes", formulario);
+      await api.post(
+        "/clientes",
+        formulario
+      );
 
     }
 
     setMostrarModal(false);
 
-    const { data } = await api.get("/clientes");
-    setClientes(data);
+    setFormulario({
+      usuario_id: "",
+      nombre: "",
+      correo: "",
+      telefono: "",
+      plan_id: "",
+      zona_id: "",
+      direccion: "",
+      estado: "activo",
+    });
+
+    setClienteSeleccionado(null);
+
+    await cargarClientes();
 
   } catch (error) {
+
     console.error(error);
-    alert("Ocurrió un error");
+
+    alert(
+      error.response?.data?.message ||
+      "Ocurrió un error"
+    );
+
   }
 };
+
   return (
     <div className="min-h-screen bg-slate-900 p-8 text-white">
 
@@ -105,82 +177,26 @@ const guardarCliente = async () => {
           </p>
         </div>
 
-               <div className="flex gap-3">
+        <div className="flex gap-3">
+          <ClienteToolbar
+            abrirNuevoCliente={abrirNuevoCliente}
+            editarCliente={editarCliente}
+            suspenderCliente={suspenderCliente}
+            clienteSeleccionado={clienteSeleccionado}
+          />
+        </div>
 
- <button
-  onClick={abrirNuevoCliente}
-  className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl font-semibold shadow-lg transition"
->
-  + Nuevo Cliente
-</button>
+        <ClienteModal
+          mostrarModal={mostrarModal}
+          modoEdicion={modoEdicion}
+          formulario={formulario}
+          setFormulario={setFormulario}
+          guardarCliente={guardarCliente}
+          setMostrarModal={setMostrarModal}
+          planes={planes}
+          zonas={zonas}
+        />
 
-  <button
-  disabled={!clienteSeleccionado}
-  onClick={() => editarCliente(clienteSeleccionado)}
-  className={`px-6 py-3 rounded-xl font-semibold transition ${
-    clienteSeleccionado
-      ? "bg-amber-500 hover:bg-amber-600 text-white"
-      : "bg-slate-700 text-slate-500 cursor-not-allowed"
-  }`}
->
-  ✏ Editar
-</button>
-
-  <button
-  disabled={!clienteSeleccionado}
-  onClick={() => suspenderCliente(clienteSeleccionado.id)}
-  className={`px-6 py-3 rounded-xl font-semibold transition ${
-    clienteSeleccionado
-      ? "bg-red-600 hover:bg-red-700 text-white"
-      : "bg-slate-700 text-slate-500 cursor-not-allowed"
-  }`}
->
-  ⛔ Suspender
-</button>
-
-</div>
-
-    {mostrarModal && (
-  <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-    <div className="bg-slate-800 rounded-2xl w-full max-w-xl p-8">
-
-      <h2 className="text-2xl font-bold mb-6">
-        {modoEdicion ? "Editar Cliente" : "Nuevo Cliente"}
-      </h2>
-
-      <input
-        type="text"
-        placeholder="Dirección"
-        value={formulario.direccion}
-        onChange={(e) =>
-          setFormulario({
-            ...formulario,
-            direccion: e.target.value,
-          })
-        }
-        className="w-full mb-6 bg-slate-700 rounded-xl px-4 py-3"
-      />
-
-      <div className="flex justify-end gap-3">
-
-        <button
-          onClick={() => setMostrarModal(false)}
-          className="bg-slate-600 hover:bg-slate-500 px-6 py-3 rounded-xl"
-        >
-          Cancelar
-        </button>
-
-        <button
-          className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl"
-        >
-          {modoEdicion ? "Actualizar" : "Guardar"}
-        </button>
-
-      </div>
-
-    </div>
-  </div>
-)}
       </div>
 
       {/* Tabla */}
@@ -220,30 +236,27 @@ const guardarCliente = async () => {
                 </td>
 
               </tr>
-              
+
 
             ) : (
 
-             clientes.map((c) => (
+              clientes.map((c) => (
 
-                    <tr
-                      key={c.id}
-                      onClick={() => {
-                        console.log("Cliente seleccionado:", c);
-                        setClienteSeleccionado(c);
-                      }}
-                      className={`
-                        border-t
-                        border-slate-700
-                        cursor-pointer
-                        transition
-                        ${
-                          clienteSeleccionado?.id === c.id
-                            ? "bg-blue-900/40"
-                            : "hover:bg-slate-700"
-                        }
-                      `}
-                    >
+                <tr
+                  key={c.id}
+                  onClick={() => setClienteSeleccionado(c)}
+                  className={`
+                    border-t
+                    border-slate-700
+                    cursor-pointer
+                    transition
+                    ${
+                      clienteSeleccionado?.id === c.id
+                        ? "bg-blue-900/40"
+                        : "hover:bg-slate-700"
+                    }
+                  `}
+                >
 
                   <td className="p-4 font-mono text-slate-200">
                     {c.codigo_contrato}
@@ -276,7 +289,7 @@ const guardarCliente = async () => {
                   <td className="p-4 text-slate-300">
                     {new Date(c.fecha_instalacion).toLocaleDateString("es-CO")}
                   </td>
-                    <td className="p-4">
+                  <td className="p-4">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-bold ${
                         c.estado === "activo"
@@ -287,7 +300,7 @@ const guardarCliente = async () => {
                       {c.estado}
                     </span>
                   </td>
-                  
+
 
                 </tr>
 

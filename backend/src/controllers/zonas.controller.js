@@ -2,17 +2,20 @@ import { query } from "../config/db.js";
 
 export const getZonas = async (req, res) => {
   try {
+
     const rows = await query(
       "SELECT * FROM zonas ORDER BY nombre ASC"
     );
 
-    res.json(rows);
+    console.log("ZONAS DESDE SQL:", rows);
+
+    return res.json(rows);
 
   } catch (error) {
 
     console.error(error);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Error al obtener zonas",
       error: error.message,
     });

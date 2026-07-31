@@ -15,6 +15,7 @@ const Login = () => {
     setLoading(true);
     try {
       const { data } = await api.post('/auth/login', form);
+      console.log("Respuesta del login:", data);
       login(data.user, data.token);
       toast.success('¡Bienvenido!');
       navigate(data.user.rol === 'admin' ? '/admin' : '/cliente');
@@ -52,7 +53,7 @@ const Login = () => {
               type="password" 
               value={form.contraseña}
               onChange={(e) => setForm({...form, contraseña: e.target.value})}
-              placeholder="••••••••"
+              placeholder=" "
               required 
               className="w-full px-4 py-3 bg-slate-800/20 border-2 border-white/30 rounded-lg focus:outline-none focus:border-blue-400 text-white placeholder-gray-300 transition"
             />

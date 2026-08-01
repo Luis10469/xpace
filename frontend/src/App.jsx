@@ -25,22 +25,28 @@ import Zonas from './pages/admin/Zonas.jsx';
 import AdminTickets from './pages/admin/Tickets.jsx';
 import Noticias from './pages/admin/Noticias.jsx';
 import Reportes from './pages/admin/Reportes.jsx';
-
+import ForgotPassword from './pages/Login/ForgotPassword.jsx';
+import ResetPassword from './pages/Login/ResetPassword.jsx';
 function App() {
   return (
     <BrowserRouter>
       <Toaster position="top-right" />
       <Routes>
         {/* Rutas públicas */}
-        <Route element={<PublicLayout />}>
-          <Route path="/" element={<Inicio />} />
-          <Route path="/cobertura" element={<Cobertura />} />
-          <Route path="/planes" element={<Planes />} />
-          <Route path="/contacto" element={<Contacto />} />
-          <Route path="/faq" element={<FAQ />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/registro" element={<Registro />} />
-        </Route>
+              <Route element={<PublicLayout />}>
+
+              <Route path="/" element={<Inicio />} />
+              <Route path="/cobertura" element={<Cobertura />} />
+              <Route path="/planes" element={<Planes />} />
+              <Route path="/contacto" element={<Contacto />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/registro" element={<Registro />} />
+
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password/:token" element={<ResetPassword />} />
+
+            </Route>
 
         {/* Rutas cliente */}
         <Route path="/cliente" element={<ClienteLayout />}>

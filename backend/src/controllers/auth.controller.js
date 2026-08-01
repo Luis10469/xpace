@@ -99,32 +99,213 @@ export const register = async (req, res) => {
 };
 
 export const recoverPassword = async (req, res) => {
+
   const { correo } = req.body;
+
   try {
+
+    // Buscar usuario
     const rows = await query(
       'SELECT * FROM usuarios WHERE correo = @param0',
       [correo]
     );
-    
+
     if (rows.length === 0) {
-      return res.status(404).json({ message: 'Correo no registrado' });
+      return res.status(404).json({
+        message: 'Correo no registrado'
+      });
     }
 
-    const token = jwt.sign({ id: rows[0].id }, process.env.JWT_SECRET, { expiresIn: '15m' });
+    const usuario = rows[0];
+
+    // Crear token (30 minutos)
+    const token = jwt.sign(
+      {
+        id: usuario.id,
+        correo: usuario.correo
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '30m'
+      }
+    );
+
+    // Fecha de expiración
+    const fechaExpiracion = new Date(
+      Date.now() + 30 * 60 * 1000
+    );
+
+    // Invalidar enlaces anteriores
+    await query(
+      `
+      UPDATE password_resets
+      SET usado = 1
+      WHERE usuario_id = @param0
+        AND usado = 0
+      `,
+      [usuario.id]
+    );
+
+    // Guardar nuevo token
+    await query(
+      `
+      INSERT INTO password_resets
+      (
+        usuario_id,
+        token,
+        fecha_expiracion
+      )
+      VALUES
+      (
+        @param0,
+        @param1,
+        @param2
+      )
+      `,
+      [
+        usuario.id,
+        token,
+        fechaExpiracion
+      ]
+    );
+
+    // Enlace
     const link = `http://localhost:5173/reset-password/${token}`;
 
+    // Enviar correo
+    await sendMail({
+      to: correo,
+      subject: 'Recuperación de contraseña - WiFiConnect',
+      html: `
+        <h2>Hola ${usuario.nombre}</h2>
+
+        <p>Recibimos una solicitud para cambiar tu contraseña.</p>
+
+        <p>
+          Haz clic en el siguiente botón:
+        </p>
+
+        <a href="${link}"
+           style="
+             background:#2563eb;
+             color:white;
+             padding:12px 20px;
+             text-decoration:none;
+             border-radius:8px;
+             display:inline-block;
+           ">
+          Restablecer contraseña
+        </a>
+
+        <p>
+          Este enlace es válido durante <b>30 minutos</b> y solo podrá utilizarse una vez.
+        </p>
+
+        <p>
+          Si no solicitaste este cambio, ignora este correo.
+        </p>
+      `
+    });
+
+    res.json({
+      message: 'Correo de recuperación enviado correctamente.'
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message: error.message
+    });
+
+  }
+
+};
+// ======================================
+// RESTABLECER CONTRASEÑA
+// ======================================
+
+export const resetPassword = async (req, res) => {
+
+  const { token, contraseña } = req.body;
+
+  try {
+
+    // Validar que el JWT sea válido
     try {
-      await sendMail({
-        to: correo,
-        subject: 'Recuperar contraseña - WiFiConnect',
-        html: `<p>Para restablecer tu contraseña haz clic <a href="${link}">aquí</a></p>`
+      jwt.verify(token, process.env.JWT_SECRET);
+    } catch (error) {
+      return res.status(400).json({
+        message: "El enlace ha expirado o no es válido."
       });
-    } catch (e) {
-      console.log('No se pudo enviar correo:', e.message);
     }
 
-    res.json({ message: 'Correo de recuperación enviado' });
+    // Buscar el token en la base de datos
+    const rows = await query(
+      `
+      SELECT *
+      FROM password_resets
+      WHERE token = @param0
+        AND usado = 0
+      `,
+      [token]
+    );
+
+    if (rows.length === 0) {
+      return res.status(400).json({
+        message: "El enlace no es válido o ya fue utilizado."
+      });
+    }
+
+    const reset = rows[0];
+
+    // Verificar fecha de expiración
+    if (new Date(reset.fecha_expiracion) < new Date()) {
+      return res.status(400).json({
+        message: "El enlace ha expirado."
+      });
+    }
+
+    // Encriptar la nueva contraseña
+    const hash = await bcrypt.hash(contraseña, 10);
+
+    // Actualizar contraseña del usuario
+    await query(
+      `
+      UPDATE usuarios
+      SET contraseña = @param0
+      WHERE id = @param1
+      `,
+      [
+        hash,
+        reset.usuario_id
+      ]
+    );
+
+    // Marcar el token como usado
+    await query(
+      `
+      UPDATE password_resets
+      SET usado = 1
+      WHERE id = @param0
+      `,
+      [reset.id]
+    );
+
+    res.json({
+      message: "Contraseña actualizada correctamente."
+    });
+
   } catch (error) {
-    res.status(500).json({ message: 'Error', error: error.message });
+
+    console.error(error);
+
+    res.status(500).json({
+      message: "Error al actualizar la contraseña",
+      error: error.message
+    });
+
   }
+
 };

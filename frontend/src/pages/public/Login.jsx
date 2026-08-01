@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import api from '../../services/api.js';
 import toast from 'react-hot-toast';
@@ -59,20 +59,32 @@ const Login = () => {
             />
           </div>
 
-          <button 
-            type="submit" 
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition disabled:opacity-50 shadow-lg mt-6"
-          >
-            {loading ? 'Cargando...' : 'Ingresar'}
-          </button>
+         <div className="flex justify-end mt-2">
+              <Link
+                to="/forgot-password"
+                className="text-sm text-blue-400 hover:text-blue-300 hover:underline transition"
+                >
+                ¿Olvidaste tu contraseña?
+              </Link>
+          </div>
+
+            <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition disabled:opacity-50 shadow-lg mt-6"
+              >
+                {loading ? 'Cargando...' : 'Ingresar'}
+             </button>
         </form>
 
         <p className="text-center text-gray-300 mt-6">
           ¿No tienes cuenta?{' '}
-          <a href="/registro" className="text-blue-400 hover:underline font-semibold">
+           <Link
+            to="/registro"
+            className="text-blue-400 hover:underline font-semibold"
+          >
             Regístrate
-          </a>
+          </Link>
         </p>
       </div>
     </div>

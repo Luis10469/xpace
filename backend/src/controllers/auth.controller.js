@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { query } from '../config/db.js';
 import { sendMail } from '../config/mail.js';
 import dotenv from 'dotenv';
-
+import resetPasswordTemplate from "../templates/auth/resetPasswordTemplate.js";
 dotenv.config();
 
 export const login = async (req, res) => {
@@ -81,7 +81,7 @@ export const register = async (req, res) => {
     try {
       await sendMail({
         to: correo,
-        subject: 'Bienvenido a WiFiConnect',
+        subject: 'Bienvenido a Spacex Fiber',
         html: `<h1>Hola ${nombre}</h1><p>Tu registro fue exitoso.</p>`
       });
     } catch (e) {
@@ -169,42 +169,17 @@ export const recoverPassword = async (req, res) => {
       ]
     );
 
-    // Enlace
+    // Enlace de recuperación
     const link = `http://localhost:5173/reset-password/${token}`;
 
-    // Enviar correo
+    // Enviar correo utilizando la plantilla HTML
     await sendMail({
       to: correo,
-      subject: 'Recuperación de contraseña - WiFiConnect',
-      html: `
-        <h2>Hola ${usuario.nombre}</h2>
-
-        <p>Recibimos una solicitud para cambiar tu contraseña.</p>
-
-        <p>
-          Haz clic en el siguiente botón:
-        </p>
-
-        <a href="${link}"
-           style="
-             background:#2563eb;
-             color:white;
-             padding:12px 20px;
-             text-decoration:none;
-             border-radius:8px;
-             display:inline-block;
-           ">
-          Restablecer contraseña
-        </a>
-
-        <p>
-          Este enlace es válido durante <b>30 minutos</b> y solo podrá utilizarse una vez.
-        </p>
-
-        <p>
-          Si no solicitaste este cambio, ignora este correo.
-        </p>
-      `
+      subject: 'Recuperación de contraseña - Spacex Fiber',
+      html: resetPasswordTemplate({
+        nombre: usuario.nombre,
+        link
+      })
     });
 
     res.json({

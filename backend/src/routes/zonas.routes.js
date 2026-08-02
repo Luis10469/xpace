@@ -3,6 +3,7 @@ import { Router } from "express";
 import {
   getZonas,
   getZonaById,
+  getZonasPublicas,
   createZona,
   updateZona,
   deleteZona,
@@ -13,9 +14,27 @@ import { checkRole } from "../middleware/roles.js";
 
 const router = Router();
 
-router.get("/", verifyToken, getZonas);
+// ==========================
+// RUTA PÚBLICA
+// ==========================
 
-router.get("/:id", verifyToken, getZonaById);
+router.get("/public", getZonasPublicas);
+
+// ==========================
+// RUTAS PROTEGIDAS
+// ==========================
+
+router.get(
+  "/",
+  verifyToken,
+  getZonas
+);
+
+router.get(
+  "/:id",
+  verifyToken,
+  getZonaById
+);
 
 router.post(
   "/",

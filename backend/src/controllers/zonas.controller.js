@@ -57,13 +57,34 @@ export const getZonaById = async (req, res) => {
 
 export const createZona = async (req, res) => {
 
-  const { nombre } = req.body;
+  const {
+    nombre,
+    descripcion,
+    estado,
+  } = req.body;
 
   try {
 
     await query(
-      "INSERT INTO zonas(nombre) VALUES(@param0)",
-      [nombre]
+      `
+      INSERT INTO zonas
+      (
+        nombre,
+        descripcion,
+        estado
+      )
+      VALUES
+      (
+        @param0,
+        @param1,
+        @param2
+      )
+      `,
+      [
+        nombre,
+        descripcion,
+        estado,
+      ]
     );
 
     res.status(201).json({
@@ -72,8 +93,10 @@ export const createZona = async (req, res) => {
 
   } catch (error) {
 
+    console.error(error);
+
     res.status(500).json({
-      message: "Error",
+      message: "Error al crear la zona",
       error: error.message,
     });
 
@@ -84,23 +107,72 @@ export const createZona = async (req, res) => {
 export const updateZona = async (req, res) => {
 
   const { id } = req.params;
-  const { nombre } = req.body;
+
+  const {
+    nombre,
+    descripcion,
+    estado,
+  } = req.body;
 
   try {
 
     await query(
-      "UPDATE zonas SET nombre=@param0 WHERE id=@param1",
-      [nombre, id]
+      `
+      UPDATE zonas
+      SET
+        nombre = @param0,
+        descripcion = @param1,
+        estado = @param2
+      WHERE id = @param3
+      `,
+      [
+        nombre,
+        descripcion,
+        estado,
+        id,
+      ]
     );
 
     res.json({
-      message: "Zona actualizada",
+      message: "Zona actualizada correctamente",
     });
 
   } catch (error) {
 
+    console.error(error);
+
     res.status(500).json({
-      message: "Error",
+      message: "Error al actualizar la zona",
+      error: error.message,
+    });
+
+  }
+
+};
+export const getZonasPublicas = async (req, res) => {
+
+  try {
+
+    const rows = await query(
+      `
+      SELECT
+        id,
+        nombre,
+        descripcion
+      FROM zonas
+      WHERE estado = 1
+      ORDER BY nombre
+      `
+    );
+
+    res.json(rows);
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message: "Error al obtener las zonas.",
       error: error.message,
     });
 

@@ -1,213 +1,442 @@
-import { Link } from 'react-router-dom';
-
-const planes = [
-  {
-    nombre: 'Plan Básico',
-    velocidad: '50 MB',
-    precio: '$39.900',
-    descripcion: 'Ideal para hogares pequeños y navegación diaria.',
-    icono: '🏠',
-    caracteristicas: [
-      'Navegación web',
-      'Redes sociales',
-      'Videollamadas',
-      'Soporte técnico',
-    ],
-  },
-  {
-    nombre: 'Plan Familiar',
-    velocidad: '100 MB',
-    precio: '$59.900',
-    descripcion: 'Perfecto para familias y entretenimiento en HD.',
-    icono: '👨‍👩‍👧‍👦',
-    destacado: true,
-    caracteristicas: [
-      'Streaming HD',
-      'Videollamadas',
-      'Múltiples dispositivos',
-      'Soporte técnico',
-    ],
-  },
-  {
-    nombre: 'Plan Premium',
-    velocidad: '200 MB',
-    precio: '$79.900',
-    descripcion: 'Mayor velocidad para streaming y gaming.',
-    icono: '🚀',
-    caracteristicas: [
-      'Streaming 4K',
-      'Gaming online',
-      'Muchos dispositivos',
-      'Soporte prioritario',
-    ],
-  },
-  {
-    nombre: 'Plan Ultra',
-    velocidad: '500 MB',
-    precio: '$99.900',
-    descripcion: 'Máximo rendimiento para hogares conectados.',
-    icono: '⚡',
-    caracteristicas: [
-      'Streaming 4K',
-      'Gaming competitivo',
-      'Gran cantidad de dispositivos',
-      'Soporte prioritario',
-    ],
-  },
-  {
-    nombre: 'Plan Empresarial',
-    velocidad: '1 GB',
-    precio: '$149.900',
-    descripcion: 'Conexión de alta capacidad para empresas.',
-    icono: '🏢',
-    caracteristicas: [
-      'Alta velocidad',
-      'Conexión empresarial',
-      'Múltiples usuarios',
-      'Atención preferencial',
-    ],
-  },
-];
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import api from "../../services/api";
 
 const Planes = () => {
-  return (
+
+  const [planes, setPlanes] = useState([]);
+
+  // ==========================
+  // CARGAR PLANES
+  // ==========================
+
+  const cargarPlanes = async () => {
+
+    try {
+
+      const { data } = await api.get("/planes/public");
+
+      setPlanes(data);
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+
+  };
+
+  useEffect(() => {
+
+    cargarPlanes();
+
+  }, []);
+
+  // ==========================
+  // ICONOS
+  // ==========================
+
+  const obtenerIcono = (nombre) => {
+
+    const texto = nombre.toLowerCase();
+
+    if (texto.includes("básico") || texto.includes("basico")) return "🏠";
+
+    if (texto.includes("familiar")) return "👨‍👩‍👧‍👦";
+
+    if (texto.includes("premium")) return "🚀";
+
+    if (texto.includes("ultra")) return "⚡";
+
+    if (texto.includes("empresarial")) return "🏢";
+
+    return "🌐";
+
+  };
+
+  // ==========================
+  // BENEFICIOS
+  // ==========================
+
+  const obtenerBeneficios = (velocidad) => {
+
+    const mb = parseInt(velocidad);
+
+    if (mb <= 50) {
+
+      return [
+
+        "Navegación ilimitada",
+        "Redes sociales",
+        "Videollamadas",
+        "Streaming HD",
+
+      ];
+
+    }
+
+    if (mb <= 100) {
+
+      return [
+
+        "Streaming Full HD",
+        "Hasta 8 dispositivos",
+        "Teletrabajo",
+        "Gaming casual",
+
+      ];
+
+    }
+
+    if (mb <= 200) {
+
+      return [
+
+        "Streaming 4K",
+        "Gaming online",
+        "Muchos dispositivos",
+        "Baja latencia",
+
+      ];
+
+    }
+
+    if (mb <= 500) {
+
+      return [
+
+        "Gaming competitivo",
+        "Streaming 4K",
+        "Hogar inteligente",
+        "Alta velocidad",
+
+      ];
+
+    }
+
+    return [
+
+      "Empresas",
+      "Servidores",
+      "Máximo rendimiento",
+      "Soporte prioritario",
+
+    ];
+
+  };
+
+  // ==========================
+  // FORMATO MONEDA
+  // ==========================
+
+  const formatoPrecio = (precio) => {
+
+    return new Intl.NumberFormat("es-CO", {
+
+      style: "currency",
+
+      currency: "COP",
+
+      maximumFractionDigits: 0,
+
+    }).format(precio);
+
+  };
+   return (
+
     <div className="max-w-7xl mx-auto px-4 py-16 text-white">
 
-      {/* ENCABEZADO */}
-      <div className="text-center mb-14">
-        <span className="text-blue-400 font-semibold uppercase tracking-widest text-sm">
-          Nuestros planes
+      {/* ==========================
+          ENCABEZADO
+      ========================== */}
+
+      <div className="text-center mb-16">
+
+        <span className="text-blue-400 uppercase tracking-[5px] font-semibold">
+
+          NUESTROS PLANES
+
         </span>
 
-        <h1 className="text-4xl md:text-6xl font-black mt-3 mb-5">
-          Elige la velocidad que necesitas
+        <h1 className="text-5xl md:text-6xl font-black mt-4">
+
+          Internet para cada necesidad
+
         </h1>
 
-        <p className="text-gray-300 max-w-2xl mx-auto text-lg">
-          Encuentra el plan ideal para tu hogar, entretenimiento,
-          gaming o empresa.
+        <p className="text-gray-300 text-lg max-w-3xl mx-auto mt-5">
+
+          Todos nuestros planes incluyen instalación profesional,
+          soporte técnico y conexión de alta velocidad.
+
         </p>
+
       </div>
 
-      {/* PLANES */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* ==========================
+          GRID
+      ========================== */}
 
-        {planes.map((plan) => (
+      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
+
+        {planes.map((plan, index) => (
+
           <div
-            key={plan.nombre}
-            className={`relative rounded-3xl p-8
-              border backdrop-blur-xl
-              transition-all duration-300
-              hover:-translate-y-2
+
+            key={plan.id}
+
+            className={`
+              relative
+              overflow-hidden
+              rounded-3xl
+              border
+              backdrop-blur-xl
+              transition-all
+              duration-300
+              hover:-translate-y-3
               hover:shadow-2xl
+
               ${
-                plan.destacado
-                  ? 'bg-blue-600/20 border-blue-400 shadow-xl shadow-blue-900/30'
-                  : 'bg-slate-800/5 border-white/10'
-              }`}
+                index === 0
+                  ? "border-blue-500 bg-blue-500/10 shadow-blue-900/40 shadow-xl"
+                  : "border-white/10 bg-slate-800/10"
+              }
+            `}
+
           >
 
-            {/* MÁS POPULAR */}
-            {plan.destacado && (
-              <div
-                className="absolute -top-4 left-1/2
-                -translate-x-1/2 px-5 py-1.5
-                rounded-full bg-blue-500
-                text-xs font-black tracking-wide"
-              >
+            {/* ======================
                 MÁS POPULAR
+            ====================== */}
+
+            {index === 0 && (
+
+              <div
+                className="
+                  absolute
+                  top-0
+                  left-0
+                  right-0
+                  bg-gradient-to-r
+                  from-blue-500
+                  to-cyan-500
+                  py-2
+                  text-center
+                  font-bold
+                  tracking-widest
+                  text-sm
+                "
+              >
+
+                ⭐ MÁS POPULAR ⭐
+
               </div>
+
             )}
 
-            {/* ICONO */}
-            <div className="text-5xl mb-5">
-              {plan.icono}
-            </div>
+            <div className="p-8">
 
-            {/* NOMBRE */}
-            <h2 className="text-2xl font-bold mb-2">
-              {plan.nombre}
-            </h2>
+              {/* ICONO */}
 
-            <p className="text-gray-400 min-h-[48px]">
-              {plan.descripcion}
-            </p>
+              <div className="text-6xl mb-5">
 
-            {/* VELOCIDAD */}
-            <div className="mt-8">
-              <span className="text-5xl font-black text-blue-400">
-                {plan.velocidad}
-              </span>
-            </div>
+                {obtenerIcono(plan.nombre)}
 
-            {/* PRECIO */}
-            <div className="mt-4 mb-7">
-              <span className="text-3xl font-black">
-                {plan.precio}
-              </span>
+              </div>
 
-              <span className="text-gray-400 ml-2">
-                / mes
-              </span>
-            </div>
+              {/* NOMBRE */}
 
-            {/* CARACTERÍSTICAS */}
-            <div className="space-y-3 mb-8">
-              {plan.caracteristicas.map((caracteristica) => (
-                <div
-                  key={caracteristica}
-                  className="flex items-center gap-3 text-gray-200"
+              <h2 className="text-3xl font-black">
+
+                {plan.nombre}
+
+              </h2>
+
+              {/* DESCRIPCIÓN */}
+
+              <p className="text-gray-300 mt-3 min-h-[60px]">
+
+                {plan.descripcion}
+
+              </p>
+
+              {/* VELOCIDAD */}
+
+              <div className="mt-8">
+
+                <span
+                  className="
+                    inline-flex
+                    items-center
+                    gap-2
+                    bg-blue-500/20
+                    text-blue-300
+                    px-5
+                    py-2
+                    rounded-full
+                    font-bold
+                    text-xl
+                  "
                 >
-                  <span className="text-blue-400 font-bold">
-                    ✓
-                  </span>
 
-                  <span>{caracteristica}</span>
-                </div>
-              ))}
+                  ⚡ {plan.velocidad}
+
+                </span>
+
+              </div>
+
+              {/* PRECIO */}
+
+              <div className="mt-8">
+
+                <span className="text-5xl font-black">
+
+                  {formatoPrecio(plan.precio)}
+
+                </span>
+
+                <span className="text-gray-400 ml-2">
+
+                  / mes
+
+                </span>
+
+              </div>
+
+              {/* CLIENTES */}
+
+              <div className="mt-4">
+
+                <span className="text-sm text-blue-300">
+
+                  👥 Elegido por {plan.total_clientes} clientes
+
+                </span>
+
+              </div> 
+                            {/* ======================
+                  BENEFICIOS
+              ====================== */}
+
+              <div className="mt-8 space-y-4">
+
+                {obtenerBeneficios(plan.velocidad).map((beneficio) => (
+
+                  <div
+                    key={beneficio}
+                    className="flex items-center gap-3 text-gray-200"
+                  >
+
+                    <div
+                      className="
+                        w-6
+                        h-6
+                        rounded-full
+                        bg-green-500/20
+                        flex
+                        items-center
+                        justify-center
+                        text-green-400
+                        text-sm
+                      "
+                    >
+                      ✓
+                    </div>
+
+                    <span>
+                      {beneficio}
+                    </span>
+
+                  </div>
+
+                ))}
+
+              </div>
+
+              {/* ======================
+                  BOTÓN
+              ====================== */}
+
+              <Link
+                to="/registro"
+                className={`
+                  mt-10
+                  block
+                  w-full
+                  text-center
+                  py-4
+                  rounded-2xl
+                  font-bold
+                  transition-all
+                  duration-300
+
+                  ${
+                    index === 0
+                      ? "bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/50"
+                      : "bg-slate-700 hover:bg-blue-600 text-white"
+                  }
+                `}
+              >
+
+                🚀 Contratar ahora
+
+              </Link>
+
             </div>
-
-            {/* CONTRATAR */}
-            <Link
-              to="/registro"
-              className={`block w-full text-center
-                py-3.5 rounded-xl
-                font-bold transition-all duration-300
-                ${
-                  plan.destacado
-                    ? 'bg-blue-600 hover:bg-blue-500 text-white'
-                    : 'bg-slate-800/10 hover:bg-blue-600 text-white border border-white/10'
-                }`}
-            >
-              Contratar
-            </Link>
 
           </div>
+
         ))}
 
       </div>
 
-      {/* COBERTURA */}
-      <div className="mt-16 text-center">
+      {/* ==========================
+          COBERTURA
+      ========================== */}
 
-        <p className="text-gray-400 mb-4">
-          Antes de contratar, confirma que tenemos cobertura en tu zona.
+      <div className="mt-20 text-center">
+
+        <h3 className="text-3xl font-bold mb-4">
+
+          ¿No sabes si llegamos a tu zona?
+
+        </h3>
+
+        <p className="text-gray-300 mb-8">
+
+          Consulta la cobertura disponible antes de contratar.
+
         </p>
 
         <Link
           to="/cobertura"
-          className="inline-block px-7 py-3 rounded-xl
-          bg-slate-800/10 hover:bg-slate-800/20
-          border border-white/10
-          text-white font-semibold transition"
+          className="
+            inline-flex
+            items-center
+            gap-3
+            px-8
+            py-4
+            rounded-2xl
+            bg-slate-800
+            hover:bg-blue-600
+            transition-all
+            duration-300
+            font-semibold
+            border
+            border-white/10
+          "
         >
-          Consultar cobertura
+
+          📍 Consultar cobertura
+
         </Link>
 
       </div>
 
     </div>
+
   );
+
 };
 
 export default Planes;

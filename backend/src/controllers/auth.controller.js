@@ -4,49 +4,234 @@ import { query } from '../config/db.js';
 import { sendMail } from '../config/mail.js';
 import dotenv from 'dotenv';
 import resetPasswordTemplate from "../templates/auth/resetPasswordTemplate.js";
+import { registrarLogin } from "./loginLogs.controller.js";
 dotenv.config();
 
 export const login = async (req, res) => {
+
   const { correo, contraseña } = req.body;
 
   try {
+
     const rows = await query(
-      'SELECT * FROM usuarios WHERE correo = @param0 AND estado = 1',
+      "SELECT * FROM usuarios WHERE correo = @param0 AND estado = 1",
       [correo]
     );
 
     if (rows.length === 0) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
-    }
+
+  await registrarLogin({
+
+    correo,
+
+    estado: "Usuario no encontrado",
+
+    ip: req.ip,
+
+    navegador: req.headers["user-agent"]
+
+  });
+
+  return res.status(404).json({
+
+    message: "Usuario no encontrado"
+
+  });
+
+}
 
     const user = rows[0];
-    const validPassword = await bcrypt.compare(contraseña, user.contraseña);
+ // ==========================
+// VALIDAR BLOQUEO
+// ==========================
+
+if (
+  user.bloqueado_hasta &&
+  new Date(user.bloqueado_hasta) > new Date()
+) {
+
+  await registrarLogin({
+
+    usuario_id: user.id,
+
+    correo: user.correo,
+
+    ip: req.ip,
+
+    navegador: req.headers["user-agent"],
+
+    estado: "Cuenta bloqueada"
+
+  });
+
+  return res.status(403).json({
+
+    message:
+      "Tu cuenta está bloqueada temporalmente. Intenta nuevamente más tarde."
+
+  });
+}
+
+    // ==========================
+    // VALIDAR CONTRASEÑA
+    // ==========================
+
+    const validPassword = await bcrypt.compare(
+      contraseña,
+      user.contraseña
+    );
 
     if (!validPassword) {
-      return res.status(401).json({ message: 'Contraseña incorrecta' });
+
+      const intentos = (user.intentos_fallidos || 0) + 1;
+
+      if (intentos >= 5) {
+
+        const bloqueo = new Date(
+          Date.now() + 15 * 60 * 1000
+        );
+
+        await query(
+  `
+  UPDATE usuarios
+  SET
+    intentos_fallidos = 0,
+    bloqueado_hasta = @param0
+  WHERE id = @param1
+  `,
+  [
+    bloqueo,
+    user.id
+  ]
+);
+
+await registrarLogin({
+
+  usuario_id: user.id,
+
+  correo: user.correo,
+
+  ip: req.ip,
+
+  navegador: req.headers["user-agent"],
+
+  estado: "Cuenta bloqueada"
+
+});
+
+return res.status(403).json({
+
+  message:
+    "Cuenta bloqueada durante 15 minutos por demasiados intentos."
+
+});
+
+      }
+      await query(
+        `
+        UPDATE usuarios
+        SET intentos_fallidos = @param0
+        WHERE id = @param1
+        `,
+        [
+          intentos,
+          user.id
+        ]
+      );
+          await registrarLogin({
+          usuario_id: user.id,
+
+            correo: user.correo,
+
+            ip: req.ip,
+
+            navegador: req.headers["user-agent"],
+
+            estado: "Contraseña incorrecta"
+
+          });
+      return res.status(401).json({
+        message:
+          `Contraseña incorrecta. Intento ${intentos} de 5.`
+      });
+
     }
 
+    // ==========================
+    // REINICIAR INTENTOS
+    // ==========================
+
+    await query(
+      `
+      UPDATE usuarios
+      SET
+        intentos_fallidos = 0,
+        bloqueado_hasta = NULL
+      WHERE id = @param0
+      `,
+      [user.id]
+    );
+
+    // ==========================
+    // GENERAR TOKEN
+    // ==========================
+    await registrarLogin({
+
+          usuario_id: user.id,
+
+          correo: user.correo,
+
+          ip: req.ip,
+
+          navegador: req.headers["user-agent"],
+
+          estado: "Exitoso"
+
+});
     const token = jwt.sign(
-      { id: user.id, rol: user.rol, correo: user.correo },
+      {
+        id: user.id,
+        rol: user.rol,
+        correo: user.correo
+      },
       process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN }
+      {
+        expiresIn: process.env.JWT_EXPIRES_IN
+      }
     );
 
     res.json({
-      message: 'Inicio de sesión exitoso',
+
+      message: "Inicio de sesión exitoso",
+
       token,
-      user: { 
-        id: user.id, 
-        nombre: user.nombre, 
+
+      user: {
+
+        id: user.id,
+        nombre: user.nombre,
         rol: user.rol,
         correo: user.correo,
         telefono: user.telefono
+
       }
+
     });
+
   } catch (error) {
-    console.error('Error en login:', error);
-    res.status(500).json({ message: 'Error en el servidor', error: error.message });
+
+    console.error(error);
+
+    res.status(500).json({
+
+      message: "Error en el servidor",
+
+      error: error.message
+
+    });
+
   }
+
 };
 
 export const register = async (req, res) => {

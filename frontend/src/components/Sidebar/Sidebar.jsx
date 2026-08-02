@@ -3,14 +3,6 @@ import { Link, useLocation } from 'react-router-dom';
 const Sidebar = ({ rol }) => {
   const location = useLocation();
 
-  const menuCliente = [
-    { path: '/cliente', label: '🏠 Dashboard', exact: true },
-    { path: '/cliente/servicio', label: '📡 Mi Servicio' },
-    { path: '/cliente/facturas', label: '💰 Facturas' },
-    { path: '/cliente/tickets', label: '🎫 Tickets' },
-    { path: '/cliente/perfil', label: '👤 Perfil' }
-  ];
-
   const menuAdmin = [
   { path: '/admin', label: '📊 Dashboard', exact: true },
   { path: '/admin/usuarios', label: '👤 Usuarios' },
@@ -18,6 +10,9 @@ const Sidebar = ({ rol }) => {
   { path: '/admin/planes', label: '📡 Planes' },
   { path: '/admin/zonas', label: '📍 Zonas' },
   { path: '/admin/tickets', label: '🎫 Tickets' },
+
+  { path: '/admin/login-logs', label: '🛡️ Historial de accesos' },
+
   { path: '/admin/noticias', label: '📰 Noticias' },
   { path: '/admin/reportes', label: '📈 Reportes' }
 ];

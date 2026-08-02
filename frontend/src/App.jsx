@@ -11,13 +11,12 @@ import Contacto from './pages/public/Contacto.jsx';
 import FAQ from './pages/public/FAQ.jsx';
 import Login from './pages/public/Login.jsx';
 import Registro from './pages/public/Registro.jsx';
-
+import LoginLogs from "./pages/Admin/LoginLogs";
 import Dashboard from './pages/cliente/Dashboard.jsx';
 import MiServicio from './pages/cliente/MiServicio.jsx';
 import Facturas from './pages/cliente/Facturas.jsx';
 import Tickets from './pages/cliente/Tickets.jsx';
 import Perfil from './pages/cliente/Perfil.jsx';
-
 import AdminDashboard from './pages/admin/Dashboard.jsx';
 import Clientes from './pages/admin/Clientes.jsx';
 import PlanesAdmin from './pages/admin/Planes.jsx';
@@ -67,6 +66,7 @@ function App() {
             <Route path="tickets" element={<AdminTickets />} />
             <Route path="noticias" element={<Noticias />} />
             <Route path="reportes" element={<Reportes />} />
+            <Route path="login-logs" element={<LoginLogs />}/>
           </Route>
       </Routes>
     </BrowserRouter>

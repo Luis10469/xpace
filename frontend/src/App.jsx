@@ -3,7 +3,7 @@ import { Toaster } from 'react-hot-toast';
 import PublicLayout from './layouts/PublicLayout.jsx';
 import ClienteLayout from './layouts/ClienteLayout.jsx';
 import AdminLayout from './layouts/AdminLayout.jsx';
-
+import Usuarios from './pages/admin/Usuarios.jsx';
 import Inicio from './pages/public/Inicio.jsx';
 import Cobertura from './pages/public/Cobertura.jsx';
 import Planes from './pages/public/Planes.jsx';
@@ -58,15 +58,16 @@ function App() {
         </Route>
 
         {/* Rutas admin */}
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="clientes" element={<Clientes />} />
-          <Route path="planes" element={<PlanesAdmin />} />
-          <Route path="zonas" element={<Zonas />} />
-          <Route path="tickets" element={<AdminTickets />} />
-          <Route path="noticias" element={<Noticias />} />
-          <Route path="reportes" element={<Reportes />} />
-        </Route>
+           <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="clientes" element={<Clientes />} />
+            <Route path="usuarios" element={<Usuarios />} />
+            <Route path="planes" element={<PlanesAdmin />} />
+            <Route path="zonas" element={<Zonas />} />
+            <Route path="tickets" element={<AdminTickets />} />
+            <Route path="noticias" element={<Noticias />} />
+            <Route path="reportes" element={<Reportes />} />
+          </Route>
       </Routes>
     </BrowserRouter>
   );

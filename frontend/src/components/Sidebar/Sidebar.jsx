@@ -12,14 +12,15 @@ const Sidebar = ({ rol }) => {
   ];
 
   const menuAdmin = [
-    { path: '/admin', label: '📊 Dashboard', exact: true },
-    { path: '/admin/clientes', label: '👥 Clientes' },
-    { path: '/admin/planes', label: '📡 Planes' },
-    { path: '/admin/zonas', label: '📍 Zonas' },
-    { path: '/admin/tickets', label: '🎫 Tickets' },
-    { path: '/admin/noticias', label: '📰 Noticias' },
-    { path: '/admin/reportes', label: '📈 Reportes' }
-  ];
+  { path: '/admin', label: '📊 Dashboard', exact: true },
+  { path: '/admin/usuarios', label: '👤 Usuarios' },
+  { path: '/admin/clientes', label: '👥 Clientes' },
+  { path: '/admin/planes', label: '📡 Planes' },
+  { path: '/admin/zonas', label: '📍 Zonas' },
+  { path: '/admin/tickets', label: '🎫 Tickets' },
+  { path: '/admin/noticias', label: '📰 Noticias' },
+  { path: '/admin/reportes', label: '📈 Reportes' }
+];
 
   const menu = rol === 'admin' ? menuAdmin : menuCliente;
 
@@ -30,7 +31,7 @@ const Sidebar = ({ rol }) => {
       <div className="p-6 border-b border-slate-700">
 
         <h1 className="text-3xl font-extrabold text-blue-500">
-          WiFiConnect
+          Spacex Fiber
         </h1>
 
         <p className="text-slate-400 mt-1 capitalize">
@@ -86,7 +87,7 @@ const Sidebar = ({ rol }) => {
       <div className="absolute bottom-0 w-72 p-6 border-t border-slate-700">
 
         <p className="text-slate-500 text-sm">
-          WiFiConnect v2.0
+          Spacex Fiber v2.0
         </p>
 
       </div>

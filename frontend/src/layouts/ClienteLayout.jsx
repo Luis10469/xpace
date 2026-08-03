@@ -5,34 +5,37 @@ import IdleTimer from '../components/security/IdleTimer.jsx';
 
 const ClienteLayout = () => {
 
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
-  if (!user) {
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <h2 className="text-xl font-semibold">
+          Cargando...
+        </h2>
+      </div>
+    );
+  }
+
+  if (!user || user.rol !== 'cliente') {
     return <Navigate to="/login" replace />;
   }
 
   return (
-
     <>
-
       <IdleTimer />
 
-      <div className="flex min-h-screen bg-gray-100">
+      <div className="flex min-h-screen bg-slate-950 text-white">
 
         <Sidebar rol="cliente" />
 
         <main className="flex-grow p-6">
-
           <Outlet />
-
         </main>
 
       </div>
-
     </>
-
   );
-
 };
 
 export default ClienteLayout;

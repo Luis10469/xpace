@@ -285,15 +285,20 @@ export const register = async (req, res) => {
 
 export const recoverPassword = async (req, res) => {
 
+  console.time("RECUPERACION");
+
   const { correo } = req.body;
 
   try {
 
-    // Buscar usuario
+    console.time("Buscar usuario");
+
     const rows = await query(
       'SELECT * FROM usuarios WHERE correo = @param0',
       [correo]
     );
+
+    console.timeEnd("Buscar usuario");
 
     if (rows.length === 0) {
       return res.status(404).json({
@@ -303,7 +308,6 @@ export const recoverPassword = async (req, res) => {
 
     const usuario = rows[0];
 
-    // Crear token (30 minutos)
     const token = jwt.sign(
       {
         id: usuario.id,
@@ -315,12 +319,12 @@ export const recoverPassword = async (req, res) => {
       }
     );
 
-    // Fecha de expiración
     const fechaExpiracion = new Date(
       Date.now() + 30 * 60 * 1000
     );
 
-    // Invalidar enlaces anteriores
+    console.time("Guardar token");
+
     await query(
       `
       UPDATE password_resets
@@ -331,7 +335,6 @@ export const recoverPassword = async (req, res) => {
       [usuario.id]
     );
 
-    // Guardar nuevo token
     await query(
       `
       INSERT INTO password_resets
@@ -354,10 +357,12 @@ export const recoverPassword = async (req, res) => {
       ]
     );
 
-    // Enlace de recuperación
+    console.timeEnd("Guardar token");
+
     const link = `http://localhost:5173/reset-password/${token}`;
 
-    // Enviar correo utilizando la plantilla HTML
+    console.time("Enviar correo");
+
     await sendMail({
       to: correo,
       subject: 'Recuperación de contraseña - Spacex Fiber',
@@ -366,6 +371,10 @@ export const recoverPassword = async (req, res) => {
         link
       })
     });
+
+    console.timeEnd("Enviar correo");
+
+    console.timeEnd("RECUPERACION");
 
     res.json({
       message: 'Correo de recuperación enviado correctamente.'
@@ -382,10 +391,6 @@ export const recoverPassword = async (req, res) => {
   }
 
 };
-// ======================================
-// RESTABLECER CONTRASEÑA
-// ======================================
-
 export const resetPassword = async (req, res) => {
 
   const { token, contraseña } = req.body;

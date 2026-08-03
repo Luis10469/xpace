@@ -1,26 +1,43 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext.jsx';
 
 const Sidebar = ({ rol }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+const { logout } = useAuth();
+const cerrarSesion = () => {
+
+  logout();
+
+  navigate("/login");
+
+};
+
+  const menuCliente = [
+    { path: '/cliente', label: '🏠 Dashboard', exact: true },
+    { path: '/cliente/servicio', label: '📡 Mi Servicio' },
+    { path: '/cliente/facturas', label: '💰 Facturas' },
+    { path: '/cliente/tickets', label: '🎫 Tickets' },
+    { path: '/cliente/perfil', label: '👤 Perfil' }
+  ];
 
   const menuAdmin = [
-  { path: '/admin', label: '📊 Dashboard', exact: true },
-  { path: '/admin/usuarios', label: '👤 Usuarios' },
-  { path: '/admin/clientes', label: '👥 Clientes' },
-  { path: '/admin/planes', label: '📡 Planes' },
-  { path: '/admin/zonas', label: '📍 Zonas' },
-  { path: '/admin/tickets', label: '🎫 Tickets' },
-
-  { path: '/admin/login-logs', label: '🛡️ Historial de accesos' },
-
-  { path: '/admin/noticias', label: '📰 Noticias' },
-  { path: '/admin/reportes', label: '📈 Reportes' }
-];
+    { path: '/admin', label: '📊 Dashboard', exact: true },
+    { path: '/admin/usuarios', label: '👤 Usuarios' },
+    { path: '/admin/clientes', label: '👥 Clientes' },
+    { path: '/admin/planes', label: '📡 Planes' },
+    { path: '/admin/zonas', label: '📍 Zonas' },
+    { path: '/admin/tickets', label: '🎫 Tickets' },
+    { path: '/admin/login-logs', label: '🛡️ Historial de accesos' },
+    { path: '/admin/noticias', label: '📰 Noticias' },
+    { path: '/admin/reportes', label: '📈 Reportes' }
+  ];
 
   const menu = rol === 'admin' ? menuAdmin : menuCliente;
 
   return (
-    <aside className="w-72 min-h-screen bg-slate-900 border-r border-slate-700 shadow-2xl">
+    <aside className="relative w-72 min-h-screen bg-slate-900 border-r border-slate-700 shadow-2xl">
 
       {/* Logo */}
       <div className="p-6 border-b border-slate-700">
@@ -37,7 +54,7 @@ const Sidebar = ({ rol }) => {
 
       {/* Menú */}
 
-      <nav className="p-4 space-y-2">
+      <nav className="p-4 space-y-2 pb-40">
 
         {menu.map((item) => {
 
@@ -79,13 +96,34 @@ const Sidebar = ({ rol }) => {
 
       {/* Footer */}
 
-      <div className="absolute bottom-0 w-72 p-6 border-t border-slate-700">
+      {/* Footer */}
 
-        <p className="text-slate-500 text-sm">
-          Spacex Fiber v2.0
-        </p>
+<div className="absolute bottom-0 w-72 p-6 border-t border-slate-700 space-y-4">
 
-      </div>
+  <button
+    onClick={cerrarSesion}
+    className="
+      w-full
+      bg-red-600
+      hover:bg-red-700
+      text-white
+      font-semibold
+      py-3
+      rounded-xl
+      transition-all
+      duration-300
+      shadow-lg
+      hover:shadow-red-500/30
+    "
+  >
+    🚪 Cerrar sesión
+  </button>
+
+  <p className="text-slate-500 text-sm text-center">
+    Spacex Fiber v2.0
+  </p>
+
+</div>
 
     </aside>
   );

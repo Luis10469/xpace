@@ -8,24 +8,37 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const stored = localStorage.getItem('user');
-    if (stored) setUser(JSON.parse(stored));
+
+    if (stored) {
+      setUser(JSON.parse(stored));
+    }
+
     setLoading(false);
   }, []);
 
   const login = (userData, token) => {
     setUser(userData);
+
     localStorage.setItem('user', JSON.stringify(userData));
     localStorage.setItem('token', token);
   };
 
   const logout = () => {
     setUser(null);
+
     localStorage.removeItem('user');
     localStorage.removeItem('token');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        loading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

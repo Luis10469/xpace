@@ -89,22 +89,34 @@ const abrirNuevoCliente = () => {
   setMostrarModal(true);
 };
   const editarCliente = (cliente) => {
+
   setModoEdicion(true);
 
-  setFormulario({
-    usuario_id: cliente.usuario_id ?? "",
+  setClienteSeleccionado(cliente);
 
-    nombre: cliente.nombre ?? "",
-    correo: cliente.correo ?? "",
-    telefono: cliente.telefono ?? "",
+setFormulario({
 
-    plan_id: cliente.plan_id ?? "",
-    zona_id: cliente.zona_id ?? "",
-    direccion: cliente.direccion ?? "",
-    estado: cliente.estado ?? "activo",
-  });
+  id: cliente.id,
+
+  usuario_id: cliente.usuario_id,
+
+  nombre: cliente.nombre ?? "",
+  correo: cliente.correo ?? "",
+  telefono: cliente.telefono ?? "",
+
+  plan_id: cliente.plan_id ?? "",
+  zona_id: cliente.zona_id ?? "",
+
+  direccion: cliente.direccion ?? "",
+
+  estado: cliente.estado ?? "activo",
+
+  fecha_instalacion: cliente.fecha_instalacion ?? ""
+
+});
 
   setMostrarModal(true);
+
 };
   const suspenderCliente = (id) => {
     console.log("Función de suspensión pendiente", id);
@@ -195,6 +207,7 @@ const abrirNuevoCliente = () => {
           setMostrarModal={setMostrarModal}
           planes={planes}
           zonas={zonas}
+          recargarClientes={cargarClientes}
         />
 
       </div>

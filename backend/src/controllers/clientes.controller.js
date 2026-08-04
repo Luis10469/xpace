@@ -1,4 +1,5 @@
 import { query } from "../config/db.js";
+import bcrypt from "bcryptjs";
 
 // ======================================
 // OBTENER TODOS LOS CLIENTES
@@ -303,4 +304,154 @@ export const deleteCliente = async (req, res) => {
       error: error.message,
     });
   }
+};
+// ======================================
+// ACTUALIZAR FECHA DE INSTALACIÓN
+// ======================================
+
+export const actualizarFechaInstalacion = async (req, res) => {
+
+  const { id } = req.params;
+
+  const {
+    fecha_instalacion,
+    password,
+    motivo
+  } = req.body;
+
+  try {
+
+    // Validar motivo
+
+    if (!motivo || motivo.trim().length < 10) {
+
+      return res.status(400).json({
+        message: "Debe ingresar un motivo de mínimo 10 caracteres."
+      });
+
+    }
+
+    // Buscar administrador
+
+    const admin = await query(
+      `
+      SELECT
+        id,
+        contraseña
+      FROM usuarios
+      WHERE id = @param0
+      `,
+      [
+        req.user.id
+      ]
+    );
+
+    if (!admin.length) {
+
+      return res.status(404).json({
+        message: "Administrador no encontrado."
+      });
+
+    }
+
+    // Verificar contraseña
+
+    const passwordCorrecta = await bcrypt.compare(
+      password,
+      admin[0].contraseña
+    );
+
+    if (!passwordCorrecta) {
+
+      return res.status(401).json({
+        message: "La contraseña del administrador es incorrecta."
+      });
+
+    }
+
+    // Buscar cliente
+
+    const cliente = await query(
+      `
+      SELECT
+        fecha_instalacion
+      FROM clientes
+      WHERE id = @param0
+      `,
+      [
+        id
+      ]
+    );
+
+    if (!cliente.length) {
+
+      return res.status(404).json({
+        message: "Cliente no encontrado."
+      });
+
+    }
+
+    const fechaAnterior = cliente[0].fecha_instalacion;
+
+    // Actualizar fecha
+
+    await query(
+      `
+      UPDATE clientes
+      SET fecha_instalacion = @param0
+      WHERE id = @param1
+      `,
+      [
+        fecha_instalacion,
+        id
+      ]
+    );
+
+    // Registrar auditoría
+
+    await query(
+      `
+      INSERT INTO auditoria_clientes
+      (
+        cliente_id,
+        administrador_id,
+        campo,
+        valor_anterior,
+        valor_nuevo,
+        motivo
+      )
+      VALUES
+      (
+        @param0,
+        @param1,
+        @param2,
+        @param3,
+        @param4,
+        @param5
+      )
+      `,
+      [
+        id,
+        req.user.id,
+        "fecha_instalacion",
+        fechaAnterior,
+        fecha_instalacion,
+        motivo
+      ]
+    );
+
+    res.json({
+      message: "Fecha de instalación actualizada correctamente."
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message: error.message
+    });
+
+  }
+
 };

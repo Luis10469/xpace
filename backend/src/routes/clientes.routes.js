@@ -1,11 +1,13 @@
 import { Router } from 'express';
+
 import {
   getClientes,
   getClienteById,
   getMiServicio,
   createCliente,
   updateCliente,
-  deleteCliente
+  deleteCliente,
+  actualizarFechaInstalacion
 } from '../controllers/clientes.controller.js';
 
 import { verifyToken } from '../middleware/auth.js';
@@ -17,13 +19,41 @@ const router = Router();
 // RUTAS ADMIN
 // ======================================
 
-router.get('/', verifyToken, checkRole('admin'), getClientes);
+router.get(
+  '/',
+  verifyToken,
+  checkRole('admin'),
+  getClientes
+);
 
-router.post('/', verifyToken, checkRole('admin'), createCliente);
+router.post(
+  '/',
+  verifyToken,
+  checkRole('admin'),
+  createCliente
+);
 
-router.put('/:id', verifyToken, checkRole('admin'), updateCliente);
+router.put(
+  '/:id',
+  verifyToken,
+  checkRole('admin'),
+  updateCliente
+);
 
-router.delete('/:id', verifyToken, checkRole('admin'), deleteCliente);
+// 🔒 Cambiar fecha de instalación con autorización
+router.put(
+  '/:id/fecha-instalacion',
+  verifyToken,
+  checkRole('admin'),
+  actualizarFechaInstalacion
+);
+
+router.delete(
+  '/:id',
+  verifyToken,
+  checkRole('admin'),
+  deleteCliente
+);
 
 // ======================================
 // SERVICIO DEL CLIENTE LOGUEADO
@@ -39,6 +69,10 @@ router.get(
 // CONSULTAR CLIENTE POR ID
 // ======================================
 
-router.get('/:id', verifyToken, getClienteById);
+router.get(
+  '/:id',
+  verifyToken,
+  getClienteById
+);
 
 export default router;

@@ -257,26 +257,29 @@ export const register = async (req, res) => {
     );
 
     // Obtener el usuario recién creado
-    const nuevoUsuario = await query(
-      'SELECT id, nombre, correo, rol FROM usuarios WHERE correo = @param0',
-      [correo]
-    );
+   // Obtener el usuario recién creado
+const nuevoUsuario = await query(
+  'SELECT id, nombre, correo, rol FROM usuarios WHERE correo = @param0',
+  [correo]
+);
 
-    // Enviar correo (opcional)
-    try {
-      await sendMail({
-        to: correo,
-        subject: 'Bienvenido a Spacex Fiber',
-        html: `<h1>Hola ${nombre}</h1><p>Tu registro fue exitoso.</p>`
-      });
-    } catch (e) {
-      console.log('No se pudo enviar correo:', e.message);
-    }
+// RESPONDER INMEDIATAMENTE
+res.status(201).json({
+  message: 'Usuario registrado exitosamente',
+  user: nuevoUsuario[0]
+});
 
-    res.status(201).json({ 
-      message: 'Usuario registrado exitosamente', 
-      user: nuevoUsuario[0]
-    });
+// Enviar el correo en segundo plano
+setImmediate(() => {
+  sendMail({
+    to: correo,
+    subject: "Bienvenido a Spacex Fiber",
+    html: `<h1>Hola ${nombre}</h1><p>Tu registro fue exitoso.</p>`
+  }).catch((e) => {
+    console.error("No se pudo enviar el correo:", e.message);
+  });
+});
+
   } catch (error) {
     console.error('Error en register:', error);
     res.status(500).json({ message: 'Error al registrar', error: error.message });

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import api from '../../services/api.js';
 import toast from 'react-hot-toast';
+import ConfirmModal from "../../components/Modals/ConfirmModal";
+
 
 const formularioInicial = {
   nombre: '',
@@ -16,7 +18,8 @@ const PlanesAdmin = () => {
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [cargando, setCargando] = useState(true);
   const [guardando, setGuardando] = useState(false);
-
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+  const [planAEliminar, setPlanAEliminar] = useState(null);
   const cargarPlanes = async () => {
     try {
       setCargando(true);
@@ -112,29 +115,43 @@ const PlanesAdmin = () => {
       setGuardando(false);
     }
   };
+const abrirEliminarPlan = (plan) => {
 
-  const eliminarPlan = async (id, nombre) => {
-    const confirmar = window.confirm(
-      `¿Seguro que quieres desactivar el plan "${nombre}"?`
+  setPlanAEliminar(plan);
+
+  setMostrarConfirmacion(true);
+
+};
+
+
+ const eliminarPlan = async () => {
+
+  if (!planAEliminar) return;
+
+  try {
+
+    await api.delete(`/planes/${planAEliminar.id}`);
+
+    toast.success("Plan desactivado");
+
+    setMostrarConfirmacion(false);
+
+    setPlanAEliminar(null);
+
+    await cargarPlanes();
+
+  } catch (error) {
+
+    console.error(error);
+
+    toast.error(
+      error.response?.data?.message ||
+      "No se pudo desactivar el plan"
     );
 
-    if (!confirmar) return;
+  }
 
-    try {
-      await api.delete(`/planes/${id}`);
-
-      toast.success('Plan desactivado');
-
-      await cargarPlanes();
-    } catch (error) {
-      console.error(error);
-
-      toast.error(
-        error.response?.data?.message ||
-        'No se pudo desactivar el plan'
-      );
-    }
-  };
+};
 
   const formatearPrecio = (precio) => {
     return new Intl.NumberFormat('es-CO', {
@@ -151,7 +168,7 @@ const PlanesAdmin = () => {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
         <div>
-          <p className="text-sm text-blue-600 font-semibold uppercase tracking-wide">
+          <p className="text-blue-400 uppercase text-sm font-semibold tracking-widest">
             Administración
           </p>
 
@@ -323,9 +340,18 @@ const PlanesAdmin = () => {
             {planes.map((plan) => (
               <div
                 key={plan.id}
-                className="bg-slate-800 rounded-2xl shadow-lg
-                border border-slate-700 p-6
-                hover:-translate-y-1 transition"
+               className="
+              bg-slate-800
+                rounded-2xl
+                shadow-lg
+                border
+                border-slate-700
+                p-6
+                hover:-translate-y-1
+                hover:shadow-blue-500/10
+                transition-all
+                duration-300
+                "
               >
 
                 <div className="flex justify-between items-start gap-3">
@@ -340,14 +366,21 @@ const PlanesAdmin = () => {
                     </p>
                   </div>
 
-                  <span className="bg-green-100 text-green-700
-                    px-3 py-1 rounded-full text-xs font-bold">
+                  <span className="
+                    bg-green-500/20
+                    text-green-400
+                    px-3
+                    py-1
+                    rounded-full
+                    text-xs
+                    font-bold
+                  ">
                     Activo
                   </span>
 
                 </div>
 
-                <p className="text-3xl font-black text-blue-600 mt-6">
+                <p className="text-3xl font-black text-blue-400 mt-6">
                   {formatearPrecio(plan.precio)}
                   <span className="text-sm text-gray-400 font-normal">
                     {' '}/ mes
@@ -358,7 +391,7 @@ const PlanesAdmin = () => {
                   {plan.descripcion || 'Sin descripción'}
                 </p>
 
-                <div className="flex gap-3 mt-6">
+                <div className="flex justify-end gap-3 mt-8">
 
                   <button
                     type="button"
@@ -372,9 +405,7 @@ const PlanesAdmin = () => {
 
                   <button
                     type="button"
-                    onClick={() =>
-                      eliminarPlan(plan.id, plan.nombre)
-                    }
+                    onClick={() => abrirEliminarPlan(plan)}
                     className="flex-1 bg-red-500
                     hover:bg-red-600 text-white
                     px-4 py-2.5 rounded-xl font-bold"
@@ -385,12 +416,29 @@ const PlanesAdmin = () => {
                 </div>
 
               </div>
+
             ))}
 
           </div>
         )}
 
-      </div>
+            </div>
+
+      <ConfirmModal
+        open={mostrarConfirmacion}
+        title="¿Desactivar este plan?"
+        message={`¿Seguro que quieres desactivar el plan "${planAEliminar?.nombre}"?`}
+        subMessage="El plan dejará de estar disponible para nuevos clientes."
+        icon="warning"
+        color="red"
+        confirmText="Sí, desactivar"
+        cancelText="Cancelar"
+        onConfirm={eliminarPlan}
+        onCancel={() => {
+          setMostrarConfirmacion(false);
+          setPlanAEliminar(null);
+        }}
+      />
 
     </div>
   );

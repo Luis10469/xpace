@@ -10,24 +10,35 @@ const Registro = () => {
     telefono: '',
     contraseña: '',
   });
-
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      await api.post('/auth/register', form);
+  if (loading) return;
 
-      toast.success('Registro exitoso');
+  setLoading(true);
 
-      navigate('/login');
-    } catch (err) {
-      toast.error(
-        err.response?.data?.message || 'Error al registrarse'
-      );
-    }
-  };
+  try {
+    await api.post('/auth/register', form);
+
+    toast.success("Registro exitoso");
+
+    navigate("/login");
+
+  } catch (err) {
+
+    toast.error(
+      err.response?.data?.message || "Error al registrarse"
+    );
+
+  } finally {
+
+    setLoading(false);
+
+  }
+};
 
   return (
     <div className="min-h-[calc(100vh-100px)] flex items-center justify-center px-4 py-16">
@@ -183,22 +194,22 @@ const Registro = () => {
             </div>
 
             {/* BOTON */}
-            <button
-              type="submit"
-              className="w-full py-4 rounded-xl
-              bg-blue-600
-              hover:bg-blue-500
-              text-white
-              font-bold
-              text-lg
-              shadow-lg
-              shadow-blue-600/30
-              transition-all
-              duration-300
-              hover:-translate-y-1"
-            >
-              Crear cuenta
-            </button>
+          <button
+            type="submit"
+            disabled={loading}
+            className={`
+              w-full py-4 rounded-xl
+              text-white font-bold text-lg
+              shadow-lg transition-all duration-300
+              ${
+                loading
+                  ? "bg-slate-600 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-500 hover:-translate-y-1 shadow-blue-600/30"
+              }
+            `}
+          >
+            {loading ? "Creando cuenta..." : "Crear cuenta"}
+          </button>
 
           </form>
 

@@ -11,7 +11,7 @@ import Contacto from './pages/public/Contacto.jsx';
 import FAQ from './pages/public/FAQ.jsx';
 import Login from './pages/public/Login.jsx';
 import Registro from './pages/public/Registro.jsx';
-import LoginLogs from "./pages/Admin/LoginLogs";
+import LoginLogs from "./pages/admin/LoginLogs";
 import Dashboard from './pages/cliente/Dashboard.jsx';
 import MiServicio from './pages/cliente/MiServicio.jsx';
 import Facturas from './pages/cliente/Facturas.jsx';

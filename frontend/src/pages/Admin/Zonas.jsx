@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../../services/api";
 import toast from "react-hot-toast";
 import ZonaModal from "../../components/Zonas/ZonaModal";
+import ConfirmModal from "../../components/Modals/ConfirmModal";
 
 const Zonas = () => {
 
@@ -20,7 +21,8 @@ const Zonas = () => {
   });
 
   const [busqueda, setBusqueda] = useState("");
-
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+  const [zonaAEliminar, setZonaAEliminar] = useState(null);
   // ==========================
   // CARGAR ZONAS
   // ==========================
@@ -134,17 +136,66 @@ const Zonas = () => {
 
   };
 
-  const zonasFiltradas = zonas.filter((z) =>
+  // ==========================
+// FILTRAR ZONAS
+// ==========================
 
-    z.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+const zonasFiltradas = zonas.filter((z) =>
 
-    (z.descripcion || "")
-      .toLowerCase()
-      .includes(busqueda.toLowerCase())
+  z.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
 
-  );
+  (z.descripcion || "")
+    .toLowerCase()
+    .includes(busqueda.toLowerCase())
+
+);
+  // ==========================
+// ABRIR MODAL ELIMINAR
+// ==========================
+
+const abrirEliminarZona = (zona) => {
+
+  setZonaAEliminar(zona);
+
+  setMostrarConfirmacion(true);
+
+};
+
+// ==========================
+// CONFIRMAR ELIMINAR
+// ==========================
+
+const eliminarZona = async () => {
+
+  if (!zonaAEliminar) return;
+
+  try {
+
+    await api.delete(`/zonas/${zonaAEliminar.id}`);
+
+    toast.success("Zona eliminada correctamente");
+
+    setMostrarConfirmacion(false);
+
+    setZonaAEliminar(null);
+
+    cargarZonas();
+
+  } catch (error) {
+
+    console.error(error);
+
+    toast.error(
+      error.response?.data?.message ||
+      "No se pudo eliminar la zona."
+    );
+
+  }
+
+};
+// ==================
 return (
-  <div className="min-h-screen bg-slate-900 p-8 text-white">
+  <div className="h-full bg-slate-900 p-8 text-white">
 
     {/* Encabezado */}
     <div className="flex justify-between items-center mb-8">
@@ -309,6 +360,7 @@ return (
                     </button>
 
                     <button
+                      onClick={() => abrirEliminarZona(zona)}
                       className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition"
                     >
                       Eliminar
@@ -338,6 +390,21 @@ return (
       guardarZona={guardarZona}
       modoEdicion={modoEdicion}
     />
+    <ConfirmModal
+  open={mostrarConfirmacion}
+  title="¿Eliminar esta zona?"
+  message="Esta acción eliminará la zona del sistema."
+  subMessage="No podrás recuperar esta información."
+  icon="delete"
+  color="red"
+  confirmText="Sí, eliminar"
+  cancelText="Cancelar"
+  onConfirm={eliminarZona}
+  onCancel={() => {
+    setMostrarConfirmacion(false);
+    setZonaAEliminar(null);
+  }}
+/>
 
   </div>
 );

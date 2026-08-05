@@ -11,12 +11,10 @@ const AdminLayout = () => {
 
     return (
 
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center h-full">
 
         <h2 className="text-xl font-semibold">
-
           Cargando...
-
         </h2>
 
       </div>
@@ -37,11 +35,11 @@ const AdminLayout = () => {
 
       <IdleTimer />
 
-      <div className="flex min-h-screen bg-slate-950 text-white">
+      <div className="flex h-screen bg-slate-950 text-white overflow-hidden">
 
         <Sidebar rol="admin" />
 
-        <main className="flex-grow p-6">
+        <main className="flex-1 overflow-y-auto p-6">
 
           <Outlet />
 

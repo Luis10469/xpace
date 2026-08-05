@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import api from "../../services/api";
 import toast from "react-hot-toast";
-import Swal from "sweetalert2";
+import ConfirmModal from "../../components/Modals/ConfirmModal";
 
 export default function Usuarios() {
 
@@ -11,10 +11,10 @@ export default function Usuarios() {
 
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
-
   const [busqueda, setBusqueda] = useState("");
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+  const [usuarioAConvertir, setUsuarioAConvertir] = useState(null);
 
   // ===============================
   // CARGAR USUARIOS
@@ -50,53 +50,50 @@ export default function Usuarios() {
   // CONVERTIR EN CLIENTE
   // ===============================
 
-  const convertirCliente = async (id) => {
+ // ===============================
+// ABRIR MODAL
+// ===============================
 
-    const resultado = await Swal.fire({
-  title: "¿Convertir en cliente?",
-  text: "Se creará un nuevo registro en el módulo Clientes.",
-  icon: "question",
+const abrirConvertirCliente = (usuario) => {
 
-  showCancelButton: true,
+  setUsuarioAConvertir(usuario);
 
-  confirmButtonText: "Sí, convertir",
-  cancelButtonText: "Cancelar",
+  setMostrarConfirmacion(true);
 
-  background: "#1e293b",
-  color: "#fff",
+};
 
-  confirmButtonColor: "#2563eb",
-  cancelButtonColor: "#475569",
+// ===============================
+// CONFIRMAR CONVERSIÓN
+// ===============================
 
-  reverseButtons: true,
+const convertirCliente = async () => {
 
-  borderRadius: "18px",
-});
+  if (!usuarioAConvertir) return;
 
-if (!resultado.isConfirmed) return;
+  try {
 
-    if (!confirmar) return;
+    const { data } = await api.post(
+      `/usuarios/${usuarioAConvertir.id}/convertir`
+    );
 
-    try {
+    toast.success(data.message);
 
-      const { data } = await api.post(
-        `/usuarios/${id}/convertir`
-      );
+    setMostrarConfirmacion(false);
 
-      toast.success(data.message);
+    setUsuarioAConvertir(null);
 
-      obtenerUsuarios();
+    obtenerUsuarios();
 
-    } catch (error) {
+  } catch (error) {
 
-      toast.error(
-        error.response?.data?.message ||
-        "Error al convertir el usuario."
-      );
+    toast.error(
+      error.response?.data?.message ||
+      "Error al convertir el usuario."
+    );
 
-    }
+  }
 
-  };
+};
 
   // ===============================
   // FILTRO
@@ -158,7 +155,7 @@ if (!resultado.isConfirmed) return;
 
   return (
 
-    <div className="min-h-screen bg-slate-900 p-8 text-white">
+    <div className="h-full bg-slate-900 p-8 text-white">
 
       {/* ==========================
           ENCABEZADO
@@ -462,9 +459,9 @@ if (!resultado.isConfirmed) return;
                     ) : (
 
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          convertirCliente(usuario.id);
+                       onClick={(e) => {
+                        e.stopPropagation();
+                        abrirConvertirCliente(usuario);
                         }}
                         className="
                           bg-blue-600
@@ -496,6 +493,21 @@ if (!resultado.isConfirmed) return;
         </table>
 
       </div>
+      <ConfirmModal
+            open={mostrarConfirmacion}
+            title="¿Convertir en cliente?"
+            message="Se creará un nuevo registro en el módulo Clientes."
+            subMessage={`Usuario: ${usuarioAConvertir?.nombre ?? ""}`}
+            icon="question"
+            color="blue"
+            confirmText="Sí, convertir"
+            cancelText="Cancelar"
+            onConfirm={convertirCliente}
+            onCancel={() => {
+              setMostrarConfirmacion(false);
+              setUsuarioAConvertir(null);
+            }}
+        />
 
     </div>
 

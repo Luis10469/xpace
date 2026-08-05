@@ -60,7 +60,7 @@ const LoginLogs = () => {
 
   return (
 
-    <div className="min-h-screen bg-slate-900 p-8 text-white">
+    <div className="h-screen bg-slate-900 p-8 text-white flex flex-col">
 
       {/* ==========================
           ENCABEZADO
@@ -211,118 +211,109 @@ const LoginLogs = () => {
           TABLA
       ========================== */}
 
-      <div className="bg-slate-800 rounded-2xl overflow-hidden border border-slate-700 shadow-2xl">
+      <div className="flex-1 flex flex-col bg-slate-800 rounded-2xl border border-slate-700 shadow-2xl overflow-hidden">
 
-        <table className="w-full">
+  <div className="overflow-y-auto flex-1">
 
-          <thead className="bg-slate-700">
+    <table className="w-full">
 
-            <tr>
+      <thead className="sticky top-0 bg-slate-700 z-20">
 
-              <th className="p-4 text-left">
-                Correo
-              </th>
+        <tr>
 
-              <th className="p-4 text-left">
-                IP
-              </th>
+          <th className="p-4 text-left">
+            Correo
+          </th>
 
-              <th className="p-4 text-left">
-                Navegador
-              </th>
+          <th className="p-4 text-left">
+            IP
+          </th>
 
-              <th className="p-4 text-center">
-                Estado
-              </th>
+          <th className="p-4 text-left">
+            Navegador
+          </th>
 
-              <th className="p-4 text-center">
-                Fecha
-              </th>
+          <th className="p-4 text-center">
+            Estado
+          </th>
+
+          <th className="p-4 text-center">
+            Fecha
+          </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        {logsFiltrados.length === 0 ? (
+
+          <tr>
+
+            <td
+              colSpan="5"
+              className="text-center p-8 text-slate-400"
+            >
+              No existen registros.
+            </td>
+
+          </tr>
+
+        ) : (
+
+          logsFiltrados.map((log) => (
+
+            <tr
+              key={log.id}
+              className="border-t border-slate-700 hover:bg-slate-700 transition"
+            >
+
+              <td className="p-4 font-semibold">
+                {log.correo}
+              </td>
+
+              <td className="p-4 text-slate-300">
+                {log.ip}
+              </td>
+
+              <td className="p-4 text-slate-300 max-w-xs truncate">
+                {log.navegador}
+              </td>
+
+              <td className="p-4 text-center">
+
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-bold ${
+                    log.estado === "Exitoso"
+                      ? "bg-green-500/20 text-green-400"
+                      : log.estado === "Cuenta bloqueada"
+                      ? "bg-yellow-500/20 text-yellow-400"
+                      : "bg-red-500/20 text-red-400"
+                  }`}
+                >
+                  {log.estado}
+                </span>
+
+              </td>
+
+              <td className="p-4 text-center text-slate-300">
+                {formatearFecha(log.fecha)}
+              </td>
 
             </tr>
 
-          </thead>
+          ))
 
-          <tbody>
+        )}
 
-            {logsFiltrados.length === 0 ? (
+      </tbody>
 
-              <tr>
+    </table>
 
-                <td
-                  colSpan="5"
-                  className="text-center p-8 text-slate-400"
-                >
+  </div>
 
-                  No existen registros.
-
-                </td>
-
-              </tr>
-
-            ) : (
-
-              logsFiltrados.map((log) => (
-
-                <tr
-                  key={log.id}
-                  className="border-t border-slate-700 hover:bg-slate-700 transition"
-                >
-
-                  <td className="p-4 font-semibold">
-
-                    {log.correo}
-
-                  </td>
-
-                  <td className="p-4 text-slate-300">
-
-                    {log.ip}
-
-                  </td>
-
-                  <td className="p-4 text-slate-300 max-w-xs truncate">
-
-                    {log.navegador}
-
-                  </td>
-
-                  <td className="p-4 text-center">
-
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-bold ${
-                        log.estado === "Exitoso"
-                          ? "bg-green-500/20 text-green-400"
-                          : log.estado === "Cuenta bloqueada"
-                          ? "bg-yellow-500/20 text-yellow-400"
-                          : "bg-red-500/20 text-red-400"
-                      }`}
-                    >
-
-                      {log.estado}
-
-                    </span>
-
-                  </td>
-
-                  <td className="p-4 text-center text-slate-300">
-
-                    {formatearFecha(log.fecha)}
-
-                  </td>
-
-                </tr>
-
-              ))
-
-            )}
-
-          </tbody>
-
-        </table>
-
-      </div>
-
+</div> 
     </div>
 
   );

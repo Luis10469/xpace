@@ -37,7 +37,7 @@ const cerrarSesion = () => {
   const menu = rol === 'admin' ? menuAdmin : menuCliente;
 
   return (
-    <aside className="relative w-72 min-h-screen bg-slate-900 border-r border-slate-700 shadow-2xl">
+    <aside className="w-72 h-screen bg-slate-900 border-r border-slate-700 shadow-2xl flex flex-col flex-shrink-0">
 
       {/* Logo */}
       <div className="p-6 border-b border-slate-700">
@@ -54,7 +54,7 @@ const cerrarSesion = () => {
 
       {/* Menú */}
 
-      <nav className="p-4 space-y-2 pb-40">
+      <nav className="flex-1 overflow-y-auto p-4 space-y-2">
 
         {menu.map((item) => {
 
@@ -98,7 +98,7 @@ const cerrarSesion = () => {
 
       {/* Footer */}
 
-<div className="absolute bottom-0 w-72 p-6 border-t border-slate-700 space-y-4">
+<div className="p-6 border-t border-slate-700 space-y-4 mt-auto">
 
   <button
     onClick={cerrarSesion}

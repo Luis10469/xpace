@@ -114,3 +114,90 @@ CREATE TABLE faq (
   respuesta TEXT,
   orden INT DEFAULT 0
 );
+
+CREATE TABLE tickets (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+
+    cliente_id INT NOT NULL,
+
+    tecnico_id INT NULL,
+
+    asunto NVARCHAR(200) NOT NULL,
+
+    descripcion NVARCHAR(MAX) NOT NULL,
+
+    categoria NVARCHAR(100) NOT NULL,
+
+    prioridad NVARCHAR(20) DEFAULT 'Media',
+
+    estado NVARCHAR(30) DEFAULT 'Abierto',
+
+    fecha_creacion DATETIME DEFAULT GETDATE(),
+
+    fecha_actualizacion DATETIME DEFAULT GETDATE(),
+
+    fecha_cierre DATETIME NULL,
+
+    FOREIGN KEY (cliente_id) REFERENCES clientes(id),
+
+    FOREIGN KEY (tecnico_id) REFERENCES usuarios(id)
+);
+CREATE TABLE ticket_mensajes (
+
+    id INT IDENTITY(1,1) PRIMARY KEY,
+
+    ticket_id INT NOT NULL,
+
+    usuario_id INT NOT NULL,
+
+    mensaje NVARCHAR(MAX) NOT NULL,
+
+    tipo NVARCHAR(20) DEFAULT 'texto',
+
+    fecha DATETIME DEFAULT GETDATE(),
+
+    FOREIGN KEY(ticket_id) REFERENCES tickets(id),
+
+    FOREIGN KEY(usuario_id) REFERENCES usuarios(id)
+
+);CREATE TABLE ticket_historial (
+
+    id INT IDENTITY(1,1) PRIMARY KEY,
+
+    ticket_id INT NOT NULL,
+
+    usuario_id INT NOT NULL,
+
+    accion NVARCHAR(200),
+
+    detalle NVARCHAR(MAX),
+
+    fecha DATETIME DEFAULT GETDATE(),
+
+    FOREIGN KEY(ticket_id) REFERENCES tickets(id),
+
+    FOREIGN KEY(usuario_id) REFERENCES usuarios(id)
+
+);CREATE TABLE ticket_adjuntos (
+
+    id INT IDENTITY(1,1) PRIMARY KEY,
+
+    ticket_id INT NOT NULL,
+
+    mensaje_id INT NULL,
+
+    nombre_original NVARCHAR(255),
+
+    ruta_archivo NVARCHAR(255),
+
+    tipo_mime NVARCHAR(100),
+
+    tamaño BIGINT,
+
+    fecha DATETIME DEFAULT GETDATE(),
+
+    FOREIGN KEY(ticket_id) REFERENCES tickets(id),
+
+    FOREIGN KEY(mensaje_id) REFERENCES ticket_mensajes(id)
+
+);

@@ -9,6 +9,7 @@ import usuariosRoutes from './routes/usuarios.routes.js';
 import dashboardRoutes from './routes/dashboard.routes.js';
 import zonasRoutes from "./routes/zonas.routes.js";
 import loginLogsRoutes from "./routes/loginLogs.routes.js";
+
 dotenv.config();
 
 const app = express();

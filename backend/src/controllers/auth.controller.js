@@ -259,8 +259,48 @@ export const register = async (req, res) => {
     // Obtener el usuario recién creado
    // Obtener el usuario recién creado
 const nuevoUsuario = await query(
-  'SELECT id, nombre, correo, rol FROM usuarios WHERE correo = @param0',
+  `
+  SELECT id, nombre, correo, rol
+  FROM usuarios
+  WHERE correo = @param0
+  `,
   [correo]
+);
+
+const usuarioCreado = nuevoUsuario[0];
+
+if (!usuarioCreado) {
+  throw new Error("No se pudo obtener el usuario creado.");
+}
+
+// Crear automáticamente el registro de cliente
+const codigoContrato = `WC-${Date.now()}`;
+
+await query(
+  `
+  INSERT INTO clientes
+  (
+    usuario_id,
+    plan_id,
+    zona_id,
+    codigo_contrato,
+    direccion,
+    fecha_instalacion
+  )
+  VALUES
+  (
+    @param0,
+    NULL,
+    NULL,
+    @param1,
+    '',
+    NULL
+  )
+  `,
+  [
+    usuarioCreado.id,
+    codigoContrato
+  ]
 );
 
 // RESPONDER INMEDIATAMENTE

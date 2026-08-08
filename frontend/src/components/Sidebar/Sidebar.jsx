@@ -5,21 +5,19 @@ const Sidebar = ({ rol }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-const { logout } = useAuth();
-const cerrarSesion = () => {
+  const { logout } = useAuth();
 
-  logout();
-
-  navigate("/login");
-
-};
+  const cerrarSesion = () => {
+    logout();
+    navigate('/login');
+  };
 
   const menuCliente = [
     { path: '/cliente', label: '🏠 Dashboard', exact: true },
     { path: '/cliente/servicio', label: '📡 Mi Servicio' },
     { path: '/cliente/facturas', label: '💰 Facturas' },
     { path: '/cliente/tickets', label: '🎫 Tickets' },
-    { path: '/cliente/perfil', label: '👤 Perfil' }
+    { path: '/cliente/perfil', label: '👤 Perfil' },
   ];
 
   const menuAdmin = [
@@ -31,17 +29,41 @@ const cerrarSesion = () => {
     { path: '/admin/tickets', label: '🎫 Tickets' },
     { path: '/admin/login-logs', label: '🛡️ Historial de accesos' },
     { path: '/admin/noticias', label: '📰 Noticias' },
-    { path: '/admin/reportes', label: '📈 Reportes' }
+    { path: '/admin/reportes', label: '📈 Reportes' },
   ];
 
   const menu = rol === 'admin' ? menuAdmin : menuCliente;
 
   return (
-    <aside className="w-72 h-screen bg-slate-900 border-r border-slate-700 shadow-2xl flex flex-col flex-shrink-0">
+    <aside
+      className="
+        fixed
+        top-0
+        left-0
+        z-50
 
-      {/* Logo */}
-      <div className="p-6 border-b border-slate-700">
+        w-[360px]
+        h-screen
 
+        bg-slate-950
+        border-r
+        border-slate-700
+
+        flex
+        flex-col
+
+        overflow-hidden
+      "
+    >
+      {/* LOGO */}
+      <div
+        className="
+          shrink-0
+          p-6
+          border-b
+          border-slate-700
+        "
+      >
         <h1 className="text-3xl font-extrabold text-blue-500">
           Spacex Fiber
         </h1>
@@ -49,21 +71,29 @@ const cerrarSesion = () => {
         <p className="text-slate-400 mt-1 capitalize">
           Panel {rol}
         </p>
-
       </div>
 
-      {/* Menú */}
+      {/* MENÚ CON SCROLL */}
+      <nav
+        className="
+          flex-1
+          min-h-0
+          overflow-y-auto
 
-      <nav className="flex-1 overflow-y-auto p-4 space-y-2">
+          p-4
+          space-y-2
 
+          scrollbar-thin
+          scrollbar-thumb-slate-600
+          scrollbar-track-transparent
+        "
+      >
         {menu.map((item) => {
-
           const isActive = item.exact
             ? location.pathname === item.path
             : location.pathname.startsWith(item.path);
 
           return (
-
             <Link
               key={item.path}
               to={item.path}
@@ -87,44 +117,44 @@ const cerrarSesion = () => {
             >
               {item.label}
             </Link>
-
           );
-
         })}
-
       </nav>
 
-      {/* Footer */}
+      {/* FOOTER FIJO ABAJO */}
+      <div
+        className="
+          shrink-0
+          p-6
+          border-t
+          border-slate-700
+          bg-slate-950
+        "
+      >
+        <button
+          type="button"
+          onClick={cerrarSesion}
+          className="
+            w-full
+            bg-red-600
+            hover:bg-red-700
+            text-white
+            font-semibold
+            py-3
+            rounded-xl
+            transition-all
+            duration-300
+            shadow-lg
+            hover:shadow-red-500/30
+          "
+        >
+          🚪 Cerrar sesión
+        </button>
 
-      {/* Footer */}
-
-<div className="p-6 border-t border-slate-700 space-y-4 mt-auto">
-
-  <button
-    onClick={cerrarSesion}
-    className="
-      w-full
-      bg-red-600
-      hover:bg-red-700
-      text-white
-      font-semibold
-      py-3
-      rounded-xl
-      transition-all
-      duration-300
-      shadow-lg
-      hover:shadow-red-500/30
-    "
-  >
-    🚪 Cerrar sesión
-  </button>
-
-  <p className="text-slate-500 text-sm text-center">
-    Spacex Fiber v2.0
-  </p>
-
-</div>
-
+        <p className="text-center text-slate-500 mt-5">
+          Spacex Fiber v2.0
+        </p>
+      </div>
     </aside>
   );
 };

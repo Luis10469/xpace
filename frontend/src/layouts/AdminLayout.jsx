@@ -4,53 +4,45 @@ import { useAuth } from '../context/AuthContext.jsx';
 import IdleTimer from '../components/security/IdleTimer.jsx';
 
 const AdminLayout = () => {
-
   const { user, loading } = useAuth();
 
   if (loading) {
-
     return (
-
-      <div className="flex items-center justify-center h-full">
-
-        <h2 className="text-xl font-semibold">
-          Cargando...
-        </h2>
-
+      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
+        Cargando...
       </div>
-
     );
-
   }
 
   if (!user || user.rol !== 'admin') {
-
     return <Navigate to="/login" replace />;
-
   }
 
   return (
+    <div className="min-h-screen bg-slate-950 text-white">
 
-    <>
+      {/* SIDEBAR FIJO */}
+      <Sidebar rol="admin" />
 
+      {/* CONTENIDO */}
+      <main
+        className="
+          ml-[360px]
+          min-h-screen
+          w-[calc(100%-360px)]
+          p-6
+          box-border
+          overflow-x-hidden
+        "
+      >
+        <Outlet />
+      </main>
+
+      {/* SEGURIDAD */}
       <IdleTimer />
 
-      <div className="flex h-screen bg-slate-950 text-white overflow-hidden">
-
-        <Sidebar rol="admin" />
-
-        <main className="flex-1 overflow-y-auto p-6">
-
-          <Outlet />
-
-        </main>
-
-      </div>
-
-    </>
-
+    </div>
   );
-
 };
 
 export default AdminLayout;

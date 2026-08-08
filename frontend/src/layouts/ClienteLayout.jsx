@@ -4,15 +4,12 @@ import { useAuth } from '../context/AuthContext.jsx';
 import IdleTimer from '../components/security/IdleTimer.jsx';
 
 const ClienteLayout = () => {
-
   const { user, loading } = useAuth();
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <h2 className="text-xl font-semibold">
-          Cargando...
-        </h2>
+      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
+        Cargando...
       </div>
     );
   }
@@ -22,19 +19,37 @@ const ClienteLayout = () => {
   }
 
   return (
-    <>
+    <div className="min-h-screen w-full overflow-x-hidden bg-slate-950 text-white">
+
+      {/* ======================================
+          SIDEBAR FIJO
+      ====================================== */}
+
+      <Sidebar rol="cliente" />
+
+      {/* ======================================
+          CONTENIDO
+          DEJAMOS ESPACIO PARA EL SIDEBAR
+      ====================================== */}
+
+      <main
+        className="
+          ml-[360px]
+          min-h-screen
+          p-6
+          box-border
+        "
+      >
+        <Outlet />
+      </main>
+
+      {/* ======================================
+          SEGURIDAD
+      ====================================== */}
+
       <IdleTimer />
 
-      <div className="flex min-h-screen bg-slate-950 text-white">
-
-        <Sidebar rol="cliente" />
-
-        <main className="flex-grow p-6">
-          <Outlet />
-        </main>
-
-      </div>
-    </>
+    </div>
   );
 };
 
